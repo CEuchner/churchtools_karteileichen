@@ -1,12 +1,505 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>ChurchTools Extension</title>
+        <title>Karteileichen - ChurchTools Extension</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+                background: white;
+                padding: 0;
+            }
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+                background: white;
+                border-radius: 0;
+                box-shadow: none;
+                padding: 30px;
+            }
+            h1 {
+                color: #333;
+                margin-bottom: 10px;
+                font-size: 28px;
+            }
+            .subtitle {
+                color: #666;
+                margin-bottom: 30px;
+                font-size: 14px;
+            }
+            .form-section {
+                display: grid;
+                grid-template-columns: 1.5fr 1fr;
+                gap: 30px;
+                margin-bottom: 30px;
+            }
+            @media (max-width: 768px) {
+                .form-section {
+                    grid-template-columns: 1fr;
+                }
+            }
+            .form-column-left {
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+            }
+            .form-column-right {
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+            }
+            .form-section > div > .form-group {
+                background: #fafafa;
+                padding: 16px;
+                border: 1px solid #e0e0e0;
+                border-radius: 6px;
+            }
+            @media (max-width: 768px) {
+                .form-column-left {
+                    order: 1;
+                }
+                .form-column-right {
+                    order: 2;
+                }
+            }
+            .form-group {
+                display: flex;
+                flex-direction: column;
+            }
+            label {
+                font-weight: 600;
+                color: #333;
+                margin-bottom: 8px;
+                font-size: 14px;
+            }
+            select, input[type="date"] {
+                padding: 10px 12px;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                font-size: 14px;
+                font-family: inherit;
+                max-width: 100%;
+            }
+            .form-group select {
+                max-width: 300px;
+            }
+            select:focus, input[type="date"]:focus {
+                outline: none;
+                border-color: #0066cc;
+                box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.1);
+            }
+            .date-range {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+            .date-range .form-group {
+                flex: 1;
+            }
+            .button-group {
+                display: flex;
+                gap: 10px;
+                margin-top: 20px;
+            }
+            button {
+                padding: 12px 24px;
+                font-size: 16px;
+                font-weight: 600;
+                border: none;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+            .btn-primary {
+                background: #0066cc;
+                color: white;
+                border-radius: 8px;
+            }
+            .btn-primary:hover {
+                background: #0052a3;
+            }
+            .btn-primary:disabled {
+                background: #ccc;
+                cursor: not-allowed;
+            }
+            .btn-secondary {
+                background: #f0f0f0;
+                color: #333;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+            }
+            .btn-secondary:hover {
+                background: #e8e8e8;
+            }
+            .btn-quick {
+                padding: 6px 12px;
+                font-size: 12px;
+                font-weight: 500;
+                background: #f0f0f0;
+                color: #333;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+            .btn-quick:hover {
+                background: #e0e0e0;
+                border-color: #999;
+            }
+            .btn-quick.active {
+                background: #0066cc;
+                color: white;
+                border-color: #0066cc;
+                font-weight: 600;
+            }
+            .btn-quick.active:hover {
+                background: #0052a3;
+            }
+            .service-checkboxes {
+                display: flex;
+                flex-direction: column;
+                gap: 0;
+                padding: 0;
+                background: #f9f9f9;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                overflow: hidden;
+                max-height: 500px;
+                overflow-y: auto;
+            }
+            .service-group-header {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                padding: 12px;
+                background: #e8f0ff;
+                border-bottom: 2px solid #0066cc;
+                cursor: pointer;
+                transition: background 0.2s;
+                margin-top: 16px;
+            }
+            .service-group-header:first-child {
+                margin-top: 0;
+            }
+            .service-group-header:hover {
+                background: #d4e4ff;
+            }
+            .service-group-toggle {
+                display: inline-block;
+                width: 16px;
+                height: 16px;
+                transition: transform 0.2s;
+                flex-shrink: 0;
+            }
+            .service-group-header.collapsed .service-group-toggle {
+                transform: rotate(-90deg);
+            }
+            .service-group-header input[type="checkbox"] {
+                width: 20px;
+                height: 20px;
+                flex-shrink: 0;
+                cursor: pointer;
+            }
+            .service-group-header label {
+                font-weight: 600;
+                color: #0066cc;
+                margin: 0;
+                cursor: pointer;
+                font-size: 15px;
+            }
+            .service-group-items {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 0;
+                padding: 8px;
+                transition: max-height 0.3s ease, padding 0.3s ease, opacity 0.3s ease;
+            }
+            .service-group-items.collapsed {
+                display: none;
+            }
+            .service-checkboxes > .service-group-header:not(:first-child) {
+                border-top: 1px solid #ddd;
+            }
+            .service-checkbox-item {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                cursor: pointer;
+                padding: 8px;
+                border-radius: 4px;
+                transition: background 0.2s;
+            }
+            .service-checkbox-item:hover {
+                background: #f0f0f0;
+            }
+            .service-checkbox-item input[type="checkbox"] {
+                cursor: pointer;
+                width: 18px;
+                height: 18px;
+            }
+            .service-checkbox-item label {
+                cursor: pointer;
+                margin: 0;
+                font-weight: normal;
+            }
+            .results-section {
+                margin-top: 40px;
+                display: none;
+            }
+            .results-section.active {
+                display: block;
+            }
+            .results-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 20px;
+                padding-bottom: 15px;
+                border-bottom: 2px solid #0066cc;
+            }
+            .results-header h2 {
+                color: #333;
+                font-size: 20px;
+            }
+            .result-count {
+                background: #0066cc;
+                color: white;
+                padding: 4px 12px;
+                border-radius: 20px;
+                font-weight: 600;
+                font-size: 14px;
+            }
+            .results-header-right {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-end;
+                gap: 12px;
+            }
+            .select-all {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 14px;
+                color: #333;
+                cursor: pointer;
+            }
+            .select-all input[type="checkbox"] {
+                width: 20px;
+                height: 20px;
+                cursor: pointer;
+                flex-shrink: 0;
+                order: 2;
+                line-height: 1;
+            }
+            .select-all span {
+                order: 1;
+                margin: 0;
+                line-height: 1.4;
+            }
+            .person-list {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+            }
+            .person-card {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 15px;
+                background: #f9f9f9;
+                border: 1px solid #e0e0e0;
+                border-radius: 4px;
+                transition: background 0.2s;
+            }
+            .person-card:hover {
+                background: #f0f0f0;
+            }
+            .person-info h3 {
+                color: #333;
+                font-size: 16px;
+                margin-bottom: 4px;
+            }
+            .person-info p {
+                color: #666;
+                font-size: 13px;
+            }
+            .person-checkbox {
+                width: 20px;
+                height: 20px;
+                cursor: pointer;
+            }
+            .status-message {
+                padding: 12px;
+                border-radius: 4px;
+                margin-bottom: 20px;
+                font-size: 14px;
+            }
+            .status-loading {
+                background: #e3f2fd;
+                color: #0066cc;
+                border: 1px solid #90caf9;
+            }
+            .status-error {
+                background: #ffebee;
+                color: #c62828;
+                border: 1px solid #ef5350;
+            }
+            .status-success {
+                background: #e8f5e9;
+                color: #2e7d32;
+                border: 1px solid #81c784;
+            }
+            .action-buttons {
+                display: flex;
+                gap: 10px;
+                margin-top: 20px;
+            }
+            .loading-spinner {
+                display: inline-block;
+                width: 16px;
+                height: 16px;
+                border: 2px solid #f3f3f3;
+                border-top: 2px solid #0066cc;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+                margin-right: 8px;
+            }
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+            .modal-overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 1000;
+                align-items: center;
+                justify-content: center;
+            }
+            .modal-overlay.active {
+                display: flex;
+            }
+            .modal-content {
+                background: white;
+                padding: 30px;
+                border-radius: 8px;
+                max-width: 500px;
+                width: 90%;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            }
+            .modal-content h3 {
+                margin-top: 0;
+                margin-bottom: 20px;
+                color: #333;
+            }
+            .modal-content .form-group {
+                margin-bottom: 20px;
+            }
+            .modal-buttons {
+                display: flex;
+                gap: 10px;
+                justify-content: flex-end;
+            }
+        </style>
     </head>
     <body>
-        <div id="app" class="min-h-screen flex flex-col"></div>
+        <div class="container">
+            <h1>🪦 Karteileichen</h1>
+            <p class="subtitle">Finde Personen in einer Gruppe, die in einem bestimmten Zeitraum in bestimmten Diensten nicht aktiv waren</p>
+            
+            <div class="form-section">
+                <div class="form-column-left">
+                    <div class="form-group">
+                        <label for="groupSelect">Gruppe *</label>
+                        <select id="groupSelect" disabled>
+                            <option value="">-- Gruppe wählen --</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Dienste *</label>
+                        <div id="serviceCheckboxes" class="service-checkboxes">
+                            <p style="color: #999; font-size: 14px;">Dienste werden geladen...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-column-right">
+                    <div class="form-group">
+                        <label>Zeitraum</label>
+                        <div class="date-range">
+                            <div class="form-group">
+                                <label for="dateFrom" style="margin-bottom: 0;">Von</label>
+                                <input type="date" id="dateFrom" />
+                                <div style="display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap;">
+                                    <button type="button" class="btn-quick btn-quick-from" data-months="3">vor 3M</button>
+                                    <button type="button" class="btn-quick btn-quick-from" data-months="6">vor 6M</button>
+                                    <button type="button" class="btn-quick btn-quick-from" data-months="12">vor 12M</button>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="dateTo" style="margin-bottom: 0;">Bis</label>
+                                <input type="date" id="dateTo" />
+                                <div style="display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap;">
+                                    <button type="button" class="btn-quick btn-quick-to" data-months="0">Heute</button>
+                                    <button type="button" class="btn-quick btn-quick-to" data-months="1">+1M</button>
+                                    <button type="button" class="btn-quick btn-quick-to" data-months="2">+2M</button>
+                                    <button type="button" class="btn-quick btn-quick-to" data-months="3">+3M</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button id="searchBtn" class="btn-primary" disabled>🔍 Inaktive finden</button>
+                <button id="resetBtn" class="btn-secondary">Zurücksetzen</button>
+            </div>
+
+            <div id="statusMessage" class="status-message" style="display: none;"></div>
+
+            <div id="resultsSection" class="results-section">
+                <div class="results-header">
+                    <h2>Ergebnisse</h2>
+                    <div class="results-header-right">
+                        <div class="result-count"><span id="resultCount">0</span> Personen</div>
+                        <label class="select-all">
+                            <span>Alle auswählen</span>
+                            <input type="checkbox" id="selectAllResults" />
+                        </label>
+                    </div>
+                </div>
+                <div id="personList" class="person-list"></div>
+                <div class="action-buttons">
+                    <button id="addToGroupBtn" class="btn-primary">➕ Zu Gruppe hinzufügen</button>
+                </div>
+            </div>
+        </div>
+        <!-- Modal for selecting target group -->
+        <div id="groupModal" class="modal-overlay">
+            <div class="modal-content">
+                <h3>Zu Gruppe hinzufügen</h3>
+                <div class="form-group">
+                    <label for="targetGroupSelect">Zielgruppe auswählen:</label>
+                    <select id="targetGroupSelect"></select>
+                </div>
+                <div class="modal-buttons">
+                    <button id="modalCancelBtn" class="btn-secondary">Abbrechen</button>
+                    <button id="modalConfirmBtn" class="btn-primary">Hinzufügen</button>
+                </div>
+            </div>
+        </div>
         <script type="module" src="/src/main.ts"></script>
     </body>
 </html>

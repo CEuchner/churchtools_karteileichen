@@ -1,114 +1,236 @@
-# ChurchTools Extension Boilerplate
+# Karteileichen - ChurchTools Extension
 
-This project provides a boilerplate for building your own extension for [ChurchTools](https://www.church.tools).
+Find inactive group members who haven't performed specific services within a configurable time period. Quickly identify members to re-engage and add them to follow-up groups.
 
-## Getting Started
+## Features
+
+✅ **Service-Based Filtering** - Select multiple services to filter by  
+✅ **Flexible Date Ranges** - Quick buttons for common periods (3M/6M/12M ago) or custom dates  
+✅ **Smart Search** - Finds members who have NOT done ANY selected service in the timeframe  
+✅ **Batch Operations** - Add multiple inactive members to another group at once  
+✅ **Responsive Design** - Works on desktop and mobile devices  
+✅ **Email Display** - Shows member email addresses for direct contact  
+✅ **Detailed Feedback** - Clear error messages for permission or validation issues  
+
+## Quick Start
 
 ### Prerequisites
 
--   Node.js (version compatible with the project)
+-   Node.js (v16+)
 -   npm or yarn
+-   ChurchTools instance with API access
 
 ### Installation
 
 1. Clone the repository
+   ```bash
+   git clone <repo-url>
+   cd karteileichen
+   ```
+
 2. Install dependencies:
-    ```bash
-    npm install
-    ```
+   ```bash
+   npm install
+   ```
+
+3. Create `.env` file (copy from `.env.example` if available):
+   ```
+   VITE_BASE_URL=https://your-instance.church.tools
+   VITE_USERNAME=your-username
+   VITE_PASSWORD=your-password
+   VITE_KEY=karteileichen
+   ```
 
 ### Optional: Using Dev Container
 
-This project includes a dev container configuration. If you use VS Code with the "Dev Containers" extension, you can:
+This project includes a dev container configuration. If you use VS Code with the "Dev Containers" extension:
 
-1. Clone the repository
-2. Open it in VS Code
-3. Click the Remote Indicator in the bottom-left corner of VS Code status bar
-4. Select "Reopen in Container"
+1. Open the repository in VS Code
+2. Click the Remote Indicator in the bottom-left corner
+3. Select "Reopen in Container"
 
-The container includes the tools mentioned in the prerequisites pre-installed and also runs `npm install` on startup.
+The container includes Node.js pre-installed and runs `npm install` automatically.
 
-## Configuration
-
-Copy `.env-example` to `.env` and fill in your data.
-
-In the `.env` file, configure the necessary constants for your project. This file is included in `.gitignore` to prevent sensitive data from being committed to version control.
-
-## Development and Deployment
+## Development
 
 ### Development Server
 
-Start a development server with hot-reload:
+Start the development server with hot-reload:
 
 ```bash
 npm run dev
 ```
 
-> **Note:** For local development, make sure to configure CORS in your ChurchTools
-> instance to allow requests from your local development server
-> (typically `http://localhost:5173`).
-> This can be done in the ChurchTools admin settings under:
-> "System Settings" > "Integrations" > "API" > "Cross-Origin Resource Sharing"
->
-> If login works in Chrome but not in Safari, the issue is usually that Safari has stricter cookie handling:
-> - Safari blocks `Secure; SameSite=None` cookies on `http://localhost` (Chrome allows them in dev).
-> - Safari also blocks cookies if the API is on another domain (third‑party cookies).
->
-> **Fix:**
-> 1. Use a Vite proxy so API calls go through your local server (`/api → https://xyz.church.tools`). This makes cookies look first‑party.
-> 2. Run your dev server with **HTTPS**. You can generate a local trusted certificate with [mkcert](https://github.com/FiloSottile/mkcert).
->
-> With proxy + HTTPS, Safari will accept and store cookies just like Chrome.
+Access the extension at `http://localhost:5173` (or as shown in terminal).
+
+**CORS Configuration Required:**
+
+For local development, configure CORS in your ChurchTools instance:
+1. Go to "System Settings" > "Integrations" > "API" > "Cross-Origin Resource Sharing"
+2. Add your dev server URL (e.g., `http://localhost:5173`)
+
+**Safari Development Issues?**
+
+If login works in Chrome but not Safari, Safari's stricter cookie handling is the issue:
+- Safari blocks `Secure; SameSite=None` cookies on `http://localhost`
+- Safari blocks third-party cookies across domains
+
+**Fix:**
+1. Use a Vite proxy so API calls go through your local server (`/api → https://your-instance.church.tools`)
+2. Run dev server with **HTTPS** using [mkcert](https://github.com/FiloSottile/mkcert) for trusted certificates
+
+With proxy + HTTPS, Safari will accept cookies like Chrome does.
 
 ### Building for Production
 
-To create a production build:
+Build the project:
 
 ```bash
 npm run build
 ```
 
+Output goes to the `dist/` directory.
+
 ### Preview Production Build
 
-To preview the production build locally:
+Test the production build locally:
 
 ```bash
 npm run preview
 ```
 
-### Deployment
+## Deployment
 
-To build and package your extension for deployment:
+### Package for ChurchTools
+
+Create a deployable ZIP file:
 
 ```bash
+npm run build
 npm run deploy
 ```
 
-This command will:
+The ZIP file will be created in the `releases/` directory and contains:
+- All compiled code in `dist/`
+- CSS and assets (minified)
+- manifest.json (if applicable)
 
-1. Build the project
-2. Package it using the `scripts/package.js` script
+### Install in ChurchTools
 
-You can find the package in the `releases` directory.
+1. Go to ChurchTools Admin Panel
+2. Navigate to "Extensions" or "Modules"
+3. Click "Upload" or "Add Extension"
+4. Select the ZIP file from `releases/`
+5. Follow the installation wizard
 
-## API
+## Usage
 
-Following endpoints are available. Permissions are possible per route. Types are documented in `ct-types.d.ts` (CustomModuleCreate, CustomModuleDataCategoryCreate, CustomModuleDataValueCreate)
+### Finding Inactive Members
 
-GET `/custommodules` get all extensions  
-GET `/custommodules/{extensionkey}` get an extensions by its key  
-GET `/custommodules/{moduleId}` get an extension by its ID
+1. **Select a Group** - Choose the group to analyze
+2. **Choose Services** - Select which services to filter by (collapsible groups)
+3. **Set Date Range** - Use quick buttons or pick custom dates
+4. **Search** - Click "Suchen" to find inactive members
+5. **Review Results** - See names, email addresses, and member status
+6. **Select Members** - Checkbox individual members or "Alle auswählen" for all
+7. **Add to Group** - Choose target group and confirm
 
-GET `/custommodules/{moduleId}/customdatacategories`  
-POST `/custommodules/{moduleId}/customdatacategories`  
-PUT `/custommodules/{moduleId}/customdatacategories/{dataCategoryId}`  
-DELETE `/custommodules/{moduleId}/customdatacategories/{dataCategoryId}`
+### Tips
 
-GET `/custommodules/{moduleId}/customdatacategories/{dataCategoryId}/customdatavalues`  
-POST `/custommodules/{moduleId}/customdatacategories/{dataCategoryId}/customdatavalues`  
-PUT `/custommodules/{moduleId}/customdatacategories/{dataCategoryId}/customdatavalues/{valueId}`  
-DELETE `/custommodules/{moduleId}/customdatacategories/{dataCategoryId}/customdatavalues/{valueId}`
+- **Use Quick Buttons** - "vor 3M" = last 3 months, "vor 6M" = last 6 months, etc.
+- **Multiple Services** - Select multiple services to find members missing ANY of them
+- **Different Groups** - Add results to a different group (e.g., "Follow-up" or "Re-engagement")
+- **Reset** - Use "Zurücksetzen" to clear all selections and start over
 
-## Support
+## Technical Details
 
-For questions about the ChurchTools API, visit the [Forum](https://forum.church.tools).
+### Architecture
+
+- **Frontend**: TypeScript + Vite
+- **Styling**: Vanilla CSS (responsive grid layout)
+- **State Management**: Global arrays + DOM state
+- **API Client**: `@churchtools/churchtools-client`
+
+### Key Files
+
+```
+src/
+├── main.ts              # Core logic, API calls, event handlers (~640 lines)
+├── vite-env.d.ts        # TypeScript definitions
+└── utils/
+    ├── ct-types.d.ts    # Generated ChurchTools API types (auto-generated)
+    └── reset.css        # Base styles
+```
+
+### API Endpoints Used
+
+- `GET /groups` - List all groups for dropdowns
+- `GET /servicegroups` - Service categories
+- `GET /services` - Complete service list
+- `GET /groups/{id}/members?pagesize=9999&personFields[]=email` - Group members with emails
+- `GET /events?from=...&to=...&include=eventServices` - Events with service assignments
+- `PUT /groups/{id}/members/{personId}` - Add person to group (note: PUT, not POST)
+
+### Search Algorithm
+
+1. Load all members from selected group
+2. Load all events in date range with service assignments
+3. Build map of `personId → set of services they've done`
+4. Filter members: return only those NOT in the map
+5. Display with email and person details
+
+## Troubleshooting
+
+### "Keine Mitglieder in dieser Gruppe gefunden"
+- Verify the group ID and selection
+- Check user has permission to view group members
+
+### "Fehler bei der Suche" - HTTP 400/403
+- Verify CORS is configured in ChurchTools
+- Check API credentials in `.env`
+- Ensure date range is valid
+
+### "Keine Berechtigung dieser Gruppe Personen hinzuzufügen"
+- User lacks permission to modify the target group
+- Contact a group administrator or ChurchTools admin
+
+### Nothing happens when clicking "Suchen"
+- Open Developer Tools (F12) and check the Console for errors
+- Check the Network tab for failed API calls
+- Verify `.env` configuration is complete
+
+## Configuration Reference
+
+### Environment Variables
+
+Required in `.env`:
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `VITE_BASE_URL` | ChurchTools instance URL (no trailing slash) | `https://myparish.church.tools` |
+| `VITE_USERNAME` | API test user account | `api_user` |
+| `VITE_PASSWORD` | API user password | `secure_password` |
+| `VITE_KEY` | Extension key | `karteileichen` |
+
+### Build Process
+
+1. TypeScript compilation
+2. Vite bundling and code splitting
+3. CSS minification
+4. Asset optimization
+5. ZIP packaging for deployment
+
+## Support & Resources
+
+- **ChurchTools API Docs**: https://forum.church.tools
+- **Vite Documentation**: https://vitejs.dev
+- **TypeScript Handbook**: https://www.typescriptlang.org/docs
+
+## Project Status
+
+See [PROJECT_STATUS.md](PROJECT_STATUS.md) for detailed technical documentation, implementation notes, and development guidelines.
+
+---
+
+**Version**: 1.0  
+**Last Updated**: Feb 15, 2026
