@@ -148,19 +148,31 @@ The ZIP file will be created in the `releases/` directory and contains:
 
 - **Frontend**: TypeScript + Vite
 - **Styling**: Vanilla CSS (responsive grid layout)
-- **State Management**: Global arrays + DOM state
+- **State Management**: Centralized state module
 - **API Client**: `@churchtools/churchtools-client`
+- **Code Structure**: Modular (v1.0.1+ refactored)
 
 ### Key Files
 
 ```
 src/
-├── main.ts              # Core logic, API calls, event handlers (~640 lines)
+├── main.ts              # Entry point & initialization (40 lines)
+├── state.ts             # State management & DOM references (35 lines)
+├── api.ts               # ChurchTools API calls (137 lines)
+├── ui.ts                # UI updates & DOM manipulation (266 lines)
+├── events.ts            # Event listener setup (237 lines)
+├── styles.css           # All styling (483 lines)
 ├── vite-env.d.ts        # TypeScript definitions
 └── utils/
-    ├── ct-types.d.ts    # Generated ChurchTools API types (auto-generated)
+    ├── ct-types.d.ts    # ChurchTools API types
     └── reset.css        # Base styles
 ```
+
+**Module Responsibilities:**
+- `state.ts` - Global state + DOM element references
+- `api.ts` - `loadInitialData()`, `searchInactiveMembers()`, `addPersonsToGroup()`
+- `ui.ts` - Status messages, dropdowns, results display
+- `events.ts` - Button clicks, date pickers, modal interactions
 
 ### API Endpoints Used
 

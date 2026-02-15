@@ -1,7 +1,8 @@
 # Project Status - Karteileichen (ChurchTools Extension)
 
 **Date:** 2026-02-15  
-**Status:** ✅ COMPLETE & PRODUCTION-READY
+**Version:** v1.0.1  
+**Status:** ✅ COMPLETE & PRODUCTION-READY (Refactored)
 
 ## Development Process
 
@@ -49,10 +50,15 @@ ChurchTools extension to identify inactive group members who haven't performed s
 
 ## Technical Implementation
 
-### Files
-- **index.html** (~470 lines): Complete UI + CSS styling + modals
-- **src/main.ts** (~640 lines): All business logic, API integration, state management
-- **src/utils/ct-types.d.ts**: Auto-generated API types (34,590 lines)
+### Files (v1.0.1 - Refactored)
+- **index.html** (99 lines): UI structure
+- **src/styles.css** (483 lines): All styling
+- **src/main.ts** (40 lines): Entry point & initialization
+- **src/state.ts** (35 lines): State management & DOM refs
+- **src/api.ts** (137 lines): ChurchTools API calls
+- **src/ui.ts** (266 lines): UI updates & DOM manipulation
+- **src/events.ts** (237 lines): Event listener setup
+- **src/utils/ct-types.d.ts**: Auto-generated API types
 
 ### Key Code Segments
 
@@ -141,12 +147,17 @@ npm run build   # Creates dist/ folder
 4. **Person Activity Dashboard:** Show when each person last did a service
 5. **Notification:** Inform group leaders automaticallyabout inactive members
 
-## File Structure
+## File Structure (v1.0.1)
 ```
 karteileichen/
-├── index.html              # UI template + styles
+├── index.html              # UI template
 ├── src/
-│   ├── main.ts            # Core logic
+│   ├── main.ts            # Entry point (40 lines)
+│   ├── state.ts           # State management (35 lines)
+│   ├── api.ts             # API calls (137 lines)
+│   ├── ui.ts              # UI updates (266 lines)
+│   ├── events.ts          # Event listeners (237 lines)
+│   ├── styles.css         # All styling (483 lines)
 │   ├── utils/
 │   │   ├── ct-types.d.ts  # Generated API types
 │   │   └── reset.css      # Base styles
@@ -162,7 +173,20 @@ karteileichen/
 For API questions: https://forum.church.tools  
 For ChurchTools documentation: https://www.church.tools
 
+## Refactoring (v1.0.1)
+
+✅ **Code Organization**
+- Extracted CSS from HTML to separate file
+- Split monolithic main.ts (890 lines) into modular architecture:
+  - `state.ts`: Centralized state & DOM references
+  - `api.ts`: All ChurchTools API communication
+  - `ui.ts`: UI updates & rendering
+  - `events.ts`: Event listener setup
+  - `main.ts`: Entry point (reduced to 40 lines)
+- Better maintainability & testability
+- No functionality changes
+
 ---
 
-**Last Updated:** Feb 15, 2026 (Session 2 complete)
+**Last Updated:** Feb 15, 2026 (v1.0.1 refactored)
 
