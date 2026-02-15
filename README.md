@@ -226,6 +226,10 @@ Required in `.env`:
 - **Vite Documentation**: https://vitejs.dev
 - **TypeScript Handbook**: https://www.typescriptlang.org/docs
 
+## Development
+
+This extension was developed with AI assistance using GitHub Copilot.
+
 ## Project Status
 
 See [PROJECT_STATUS.md](PROJECT_STATUS.md) for detailed technical documentation, implementation notes, and development guidelines.

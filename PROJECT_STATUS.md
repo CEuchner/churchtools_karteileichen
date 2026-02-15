@@ -3,6 +3,10 @@
 **Date:** 2026-02-15  
 **Status:** ✅ COMPLETE & PRODUCTION-READY
 
+## Development Process
+
+This extension was developed with AI pair programming using GitHub Copilot, enabling rapid iteration and implementation of all features in a single development session.
+
 ## Overview
 ChurchTools extension to identify inactive group members who haven't performed selected services within a specified time period. Users can then add these inactive members to other groups.
 
