@@ -113,7 +113,7 @@ export async function addPersonsToGroup(targetGroupId: string, personIds: number
 
     for (const personId of personIds) {
         try {
-            await churchtoolsClient.patch(`/groups/${targetGroupId}/members/${personId}`, {
+            await churchtoolsClient.put(`/groups/${targetGroupId}/members/${personId}`, {
                 groupMemberStatus: 'active',
             });
             successCount++;
