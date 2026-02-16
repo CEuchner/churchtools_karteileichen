@@ -86,8 +86,8 @@ try {
     // Pipe archive data to the file
     archive.pipe(output);
 
-    // Add dist directory to archive, excluding source maps and system files
-    archive.directory(distDir, 'dist');
+    // Add dist directory contents to archive root, excluding source maps and system files
+    archive.directory(distDir, false);
 
     // Finalize the archive
     archive.finalize();
