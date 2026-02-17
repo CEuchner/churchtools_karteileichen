@@ -24,3 +24,7 @@ dist-ssr
 *.sln
 *.sw?
 releases
+# Local development notes (not committed)
+TESTING_CHECKLIST.md
+PROJECT_NOTES.md
+LOCAL_*.md

@@ -12,11 +12,14 @@ export const state = {
     services: [] as Service[],
     serviceGroups: [] as ServiceGroup[],
     inactivePersons: [] as InactivePersonData[],
+    selectedGroupId: '',
+    selectedTargetGroupId: '',
 };
 
 // DOM Elements
 export const elements = {
-    groupSelect: document.getElementById('groupSelect') as HTMLSelectElement,
+    groupSearch: document.getElementById('groupSearch') as HTMLInputElement,
+    groupSuggestions: document.getElementById('groupSuggestions') as HTMLDivElement,
     serviceCheckboxes: document.getElementById('serviceCheckboxes') as HTMLDivElement,
     dateFrom: document.getElementById('dateFrom') as HTMLInputElement,
     dateTo: document.getElementById('dateTo') as HTMLInputElement,
@@ -29,7 +32,8 @@ export const elements = {
     resultCount: document.getElementById('resultCount') as HTMLSpanElement,
     selectAllResults: document.getElementById('selectAllResults') as HTMLInputElement,
     groupModal: document.getElementById('groupModal') as HTMLDivElement,
-    targetGroupSelect: document.getElementById('targetGroupSelect') as HTMLSelectElement,
+    targetGroupSearch: document.getElementById('targetGroupSearch') as HTMLInputElement,
+    targetGroupSuggestions: document.getElementById('targetGroupSuggestions') as HTMLDivElement,
     modalCancelBtn: document.getElementById('modalCancelBtn') as HTMLButtonElement,
     modalConfirmBtn: document.getElementById('modalConfirmBtn') as HTMLButtonElement,
 };

@@ -4,13 +4,15 @@ Find inactive group members who haven't performed specific services within a con
 
 ## Features
 
+✅ **Autocomplete Group Search** - Type to search groups with real-time suggestions and keyboard navigation  
 ✅ **Service-Based Filtering** - Select multiple services to filter by  
-✅ **Flexible Date Ranges** - Quick buttons for common periods (3M/6M/12M ago) or custom dates  
+✅ **Flexible Date Ranges** - Quick buttons (Heute, 1M-12M) or custom dates  
 ✅ **Smart Search** - Finds members who have NOT done ANY selected service in the timeframe  
 ✅ **Batch Operations** - Add multiple inactive members to another group at once  
 ✅ **Responsive Design** - Works on desktop and mobile devices  
 ✅ **Email Display** - Shows member email addresses for direct contact  
 ✅ **Detailed Feedback** - Clear error messages for permission or validation issues  
+✅ **Optimized API** - Endpoint-specific pagination with safety guards  
 
 ## Quick Start
 
@@ -127,17 +129,18 @@ The ZIP file will be created in the `releases/` directory and contains:
 
 ### Finding Inactive Members
 
-1. **Select a Group** - Choose the group to analyze
+1. **Search for a Group** - Type group name in the search field, select from suggestions
 2. **Choose Services** - Select which services to filter by (collapsible groups)
-3. **Set Date Range** - Use quick buttons or pick custom dates
+3. **Set Date Range** - Use quick buttons (Heute, 1M-12M) or pick custom dates
 4. **Search** - Click "Suchen" to find inactive members
 5. **Review Results** - See names, email addresses, and member status
 6. **Select Members** - Checkbox individual members or "Alle auswählen" for all
-7. **Add to Group** - Choose target group and confirm
+7. **Add to Group** - Type to search target group, select and confirm
 
 ### Tips
 
-- **Use Quick Buttons** - "vor 3M" = last 3 months, "vor 6M" = last 6 months, etc.
+- **Autocomplete Search** - Type to filter groups, use Arrow keys to navigate, Enter to select, Escape to close
+- **Use Quick Buttons** - "Heute" = today, "vor 3M" = last 3 months, "vor 6M" = last 6 months, etc.
 - **Multiple Services** - Select multiple services to find members missing ANY of them
 - **Different Groups** - Add results to a different group (e.g., "Follow-up" or "Re-engagement")
 - **Reset** - Use "Zurücksetzen" to clear all selections and start over
@@ -248,5 +251,5 @@ See [PROJECT_STATUS.md](PROJECT_STATUS.md) for detailed technical documentation,
 
 ---
 
-**Version**: 1.0  
-**Last Updated**: Feb 15, 2026
+**Version**: 1.0.2+  
+**Last Updated**: Feb 17, 2026

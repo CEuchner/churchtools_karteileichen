@@ -1,8 +1,8 @@
 # Project Status - Karteileichen (ChurchTools Extension)
 
-**Date:** 2026-02-15  
-**Version:** v1.0.1  
-**Status:** ✅ COMPLETE & PRODUCTION-READY (Refactored)
+**Date:** 2026-02-17  
+**Version:** v1.0.2+  
+**Status:** ✅ COMPLETE & ENHANCED (Post-Testing Updates)
 
 ## Development Process
 
@@ -48,16 +48,40 @@ ChurchTools extension to identify inactive group members who haven't performed s
 - Default: last 6 months (configurable via quick buttons)
 - Mobile-friendly date picker
 
+### Phase 3: Post-Testing Enhancements (Feb 17)
+✅ **Autocomplete Group Search**
+- Replaced dropdown menus with text input + autocomplete suggestions
+- Real-time filtering as user types
+- Keyboard navigation (Arrow keys, Enter, Escape)
+- Implemented for both main group search and target group modal
+- Improved UX for instances with many groups
+
+✅ **Extended Quick Date Buttons**
+- Added "Heute" (Today) button for "Von" (From) date
+- Changed default "Nach" (To) date to +3 months
+- Quick buttons now cover: Heute, 1M-12M backwards and 1M-12M forwards
+- Enhanced date selection workflow
+
+✅ **API Pagination Optimization**
+- Added configurable `limit` parameter to `fetchAllPages()`
+- Endpoint-specific limits: `/events` uses 100 (API max), `/groups` uses 200
+- Safety guards: MAX_PAGES=100, signature-based duplicate detection
+- Fixed `/services` endpoint (no pagination support)
+
+✅ **Bug Fixes**
+- Fixed state reset issue in autocomplete (target group was reset when typing in main search)
+- Removed unused variable in events.ts (cleanup)
+
 ## Technical Implementation
 
-### Files (v1.0.1 - Refactored)
-- **index.html** (99 lines): UI structure
-- **src/styles.css** (483 lines): All styling
+### Files (v1.0.2+ - Enhanced)
+- **index.html** (~115 lines): UI structure with autocomplete inputs
+- **src/styles.css** (~520 lines): All styling including autocomplete overlays
 - **src/main.ts** (40 lines): Entry point & initialization
-- **src/state.ts** (35 lines): State management & DOM refs
-- **src/api.ts** (137 lines): ChurchTools API calls
-- **src/ui.ts** (266 lines): UI updates & DOM manipulation
-- **src/events.ts** (237 lines): Event listener setup
+- **src/state.ts** (~45 lines): State management, DOM refs, autocomplete state
+- **src/api.ts** (~200 lines): ChurchTools API calls with optimized pagination
+- **src/ui.ts** (~320 lines): UI updates, DOM manipulation, autocomplete rendering
+- **src/events.ts** (~390 lines): Event listeners with keyboard navigation
 - **src/utils/ct-types.d.ts**: Auto-generated API types
 
 ### Key Code Segments
@@ -82,11 +106,11 @@ ChurchTools extension to identify inactive group members who haven't performed s
 ```
 
 ### API Endpoints Used
-- `GET /groups?pagesize=9999` — Load groups for dropdowns
-- `GET /servicegroups?pagesize=9999` — Load service categories
-- `GET /services?pagesize=9999` — Load all services
+- `GET /groups?limit=200&page=X` — Load groups with pagination
+- `GET /servicegroups?limit=200&page=X` — Load service categories with pagination
+- `GET /services` — Load all services (no pagination support)
 - `GET /groups/{id}/members?pagesize=9999&personFields[]=email` — Load group members with email
-- `GET /events?from=...&to=...&include=eventServices` — Load events with service assignments
+- `GET /events?from=...&to=...&limit=100&page=X&include=eventServices` — Load events (limit 100 max)
 - `PUT /groups/{id}/members/{personId}` — Add person to group
 
 ## Development
@@ -188,5 +212,11 @@ For ChurchTools documentation: https://www.church.tools
 
 ---
 
-**Last Updated:** Feb 15, 2026 (v1.0.1 refactored)
+**Changelog:**
+- **v1.0.2+** (Feb 17, 2026): Autocomplete group search, extended quick date buttons, API pagination optimization, bug fixes
+- **v1.0.2** (Feb 17, 2026): PUT fix for adding members
+- **v1.0.1** (Feb 15, 2026): Code refactoring to modular architecture
+- **v1.0.0** (Feb 14, 2026): Initial release
+
+**Last Updated:** Feb 17, 2026 (v1.0.2+ with enhancements)
 

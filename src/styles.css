@@ -85,7 +85,7 @@ label {
     font-size: 14px;
 }
 
-select, input[type="date"] {
+select, input[type="date"], input[type="text"] {
     padding: 10px 12px;
     border: 1px solid #ddd;
     border-radius: 4px;
@@ -98,7 +98,52 @@ select, input[type="date"] {
     max-width: 300px;
 }
 
-select:focus, input[type="date"]:focus {
+.group-search {
+    width: 100%;
+}
+
+.autocomplete {
+    position: relative;
+}
+
+.autocomplete-list {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    max-height: 220px;
+    overflow-y: auto;
+    display: none;
+    z-index: 20;
+}
+
+.autocomplete-list.is-open {
+    display: block;
+}
+
+.autocomplete-item {
+    padding: 10px 12px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #333;
+}
+
+.autocomplete-item:hover,
+.autocomplete-item.active {
+    background: #e8f0ff;
+}
+
+.autocomplete-empty {
+    padding: 10px 12px;
+    color: #666;
+    font-size: 13px;
+}
+
+select:focus, input[type="date"]:focus, input[type="text"]:focus {
     outline: none;
     border-color: #0066cc;
     box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.1);

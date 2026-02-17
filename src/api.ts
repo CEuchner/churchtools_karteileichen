@@ -2,20 +2,79 @@ import { churchtoolsClient } from '@churchtools/churchtools-client';
 import type { Group, Service, ServiceGroup, GroupMember, Event, Person } from './utils/ct-types';
 import { state } from './state';
 
+const DEFAULT_LIMIT = 200;
+const MAX_PAGES = 100;
+
+async function fetchAllPages<T>(
+    path: string,
+    query: string = '',
+    options: { supportsPagination?: boolean; limit?: number } = {}
+): Promise<T[]> {
+    const results: T[] = [];
+    const supportsPagination = options.supportsPagination ?? true;
+    const limit = options.limit ?? DEFAULT_LIMIT;
+    let page = 1;
+    let lastSignature = '';
+
+    while (true) {
+        if (!supportsPagination) {
+            const url = query ? `${path}?${query}` : path;
+            const response = await churchtoolsClient.get<any>(url);
+            const data = Array.isArray(response) ? response : response?.data ?? [];
+            return data;
+        }
+
+        if (page > MAX_PAGES) {
+            throw new Error(`Pagination abort for ${path}: exceeded ${MAX_PAGES} pages`);
+        }
+
+        const joiner = query ? '&' : '';
+        const url = `${path}?${query}${joiner}limit=${limit}&page=${page}`;
+        const response = await churchtoolsClient.get<any>(url);
+
+        const data = Array.isArray(response) ? response : response?.data ?? [];
+        results.push(...data);
+
+        const meta = !Array.isArray(response) ? response?.meta?.pagination : undefined;
+        if (meta && page >= meta.lastPage) {
+            break;
+        }
+
+        if (!meta && data.length === 0) {
+            break;
+        }
+
+        if (!meta) {
+            const firstId = (data[0] as any)?.id ?? '';
+            const lastId = (data[data.length - 1] as any)?.id ?? '';
+            const signature = `${data.length}:${firstId}:${lastId}`;
+            if (signature === lastSignature) {
+                break;
+            }
+            lastSignature = signature;
+        }
+
+        if (!meta && data.length < limit) {
+            break;
+        }
+
+        page += 1;
+    }
+
+    return results;
+}
+
 // Load all data from ChurchTools
 export async function loadInitialData() {
     try {
         // Load groups
-        const groupsResponse = await churchtoolsClient.get<Group[]>('/groups?pagesize=9999');
-        state.groups = groupsResponse || [];
+        state.groups = await fetchAllPages<Group>('/groups');
 
         // Load service groups
-        const serviceGroupsResponse = await churchtoolsClient.get<ServiceGroup[]>('/servicegroups?pagesize=9999');
-        state.serviceGroups = serviceGroupsResponse || [];
+        state.serviceGroups = await fetchAllPages<ServiceGroup>('/servicegroups');
 
-        // Load services
-        const servicesResponse = await churchtoolsClient.get<Service[]>('/services?pagesize=9999');
-        state.services = servicesResponse || [];
+        // Load services (no pagination support on this endpoint)
+        state.services = await fetchAllPages<Service>('/services', '', { supportsPagination: false });
 
         return true;
     } catch (error) {
@@ -32,8 +91,9 @@ export async function searchInactiveMembers(
 ): Promise<Array<{ person: Person; selected: boolean }>> {
     try {
         // 1. Load group members
-        const members = await churchtoolsClient.get<GroupMember[]>(
-            `/groups/${groupId}/members?pagesize=9999&personFields[]=email&personFields[]=firstName&personFields[]=lastName`
+        const members = await fetchAllPages<GroupMember>(
+            `/groups/${groupId}/members`,
+            'personFields[]=email&personFields[]=firstName&personFields[]=lastName'
         );
 
         if (members.length === 0) {
@@ -46,8 +106,10 @@ export async function searchInactiveMembers(
         endDate.setDate(endDate.getDate() + 1);
         const inclusiveToDate = endDate.toISOString().split('T')[0];
 
-        const events = await churchtoolsClient.get<Event[]>(
-            `/events?from=${fromDate}&to=${inclusiveToDate}&include=eventServices&pagesize=9999`
+        const events = await fetchAllPages<Event>(
+            '/events',
+            `from=${fromDate}&to=${inclusiveToDate}&include=eventServices`,
+            { limit: 100 }
         );
 
         // 3. Build map of person ID -> set of service IDs they've done

@@ -13,30 +13,91 @@ export function hideStatus() {
     elements.statusMessage.style.display = 'none';
 }
 
-// Populate group dropdown
-export function populateGroupSelect() {
-    elements.groupSelect.innerHTML = '<option value="">-- Gruppe wählen --</option>';
-    state.groups.forEach(group => {
-        const option = document.createElement('option');
-        option.value = group.id.toString();
-        option.textContent = group.name || 'Unbenannte Gruppe';
-        elements.groupSelect.appendChild(option);
+function filterGroups(filterText: string, excludeGroupId?: string) {
+    const filter = filterText.trim().toLowerCase();
+    return state.groups.filter(group => {
+        if (excludeGroupId && group.id.toString() === excludeGroupId) {
+            return false;
+        }
+        if (!filter) {
+            return true;
+        }
+        return (group.name || '').toLowerCase().includes(filter);
     });
 }
 
-// Populate target group select (exclude current search group)
-export function populateTargetGroupSelect() {
-    const currentGroupId = elements.groupSelect.value;
-    elements.targetGroupSelect.innerHTML = '<option value="">-- Zielgruppe wählen --</option>';
-    state.groups.forEach(group => {
-        if (group.id.toString() === currentGroupId) {
-            return; // Exclude the currently selected search group
-        }
-        const option = document.createElement('option');
-        option.value = group.id.toString();
-        option.textContent = group.name || 'Unbenannte Gruppe';
-        elements.targetGroupSelect.appendChild(option);
+function renderGroupSuggestions(container: HTMLDivElement, groups: typeof state.groups, emptyText: string) {
+    container.innerHTML = '';
+    if (groups.length === 0) {
+        const empty = document.createElement('div');
+        empty.className = 'autocomplete-empty';
+        empty.textContent = emptyText;
+        container.appendChild(empty);
+        container.classList.add('is-open');
+        return;
+    }
+
+    groups.forEach(group => {
+        const item = document.createElement('div');
+        item.className = 'autocomplete-item';
+        item.textContent = group.name || 'Unbenannte Gruppe';
+        item.dataset.groupId = group.id.toString();
+        container.appendChild(item);
     });
+
+    container.classList.add('is-open');
+}
+
+export function updateGroupSuggestions(filterText: string) {
+    const groups = filterGroups(filterText);
+    renderGroupSuggestions(elements.groupSuggestions, groups, 'Keine Gruppen gefunden');
+}
+
+export function updateTargetGroupSuggestions(filterText: string) {
+    const groups = filterGroups(filterText, state.selectedGroupId);
+    renderGroupSuggestions(elements.targetGroupSuggestions, groups, 'Keine Zielgruppen gefunden');
+}
+
+export function closeGroupSuggestions() {
+    elements.groupSuggestions.classList.remove('is-open');
+    elements.groupSuggestions.innerHTML = '';
+}
+
+export function closeTargetGroupSuggestions() {
+    elements.targetGroupSuggestions.classList.remove('is-open');
+    elements.targetGroupSuggestions.innerHTML = '';
+}
+
+export function setSelectedGroup(groupId: string) {
+    const group = state.groups.find(item => item.id.toString() === groupId);
+    if (!group) {
+        return;
+    }
+    state.selectedGroupId = groupId;
+    elements.groupSearch.value = group.name || 'Unbenannte Gruppe';
+    closeGroupSuggestions();
+}
+
+export function setSelectedTargetGroup(groupId: string) {
+    const group = state.groups.find(item => item.id.toString() === groupId);
+    if (!group) {
+        return;
+    }
+    state.selectedTargetGroupId = groupId;
+    elements.targetGroupSearch.value = group.name || 'Unbenannte Gruppe';
+    closeTargetGroupSuggestions();
+}
+
+export function clearGroupSelection() {
+    state.selectedGroupId = '';
+    elements.groupSearch.value = '';
+    closeGroupSuggestions();
+}
+
+export function clearTargetGroupSelection() {
+    state.selectedTargetGroupId = '';
+    elements.targetGroupSearch.value = '';
+    closeTargetGroupSuggestions();
 }
 
 // Populate service checkboxes with grouping
@@ -249,8 +310,10 @@ export function setDefaultDates() {
     const today = new Date();
     const sixMonthsAgo = new Date();
     sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
-    elements.dateTo.valueAsDate = today;
+    const threeMonthsAhead = new Date();
+    threeMonthsAhead.setMonth(threeMonthsAhead.getMonth() + 3);
     elements.dateFrom.valueAsDate = sixMonthsAgo;
+    elements.dateTo.valueAsDate = threeMonthsAhead;
 
     document.querySelectorAll('.btn-quick-from').forEach(btn => {
         if ((btn as HTMLElement).dataset.months === '6') {
@@ -258,7 +321,7 @@ export function setDefaultDates() {
         }
     });
     document.querySelectorAll('.btn-quick-to').forEach(btn => {
-        if ((btn as HTMLElement).dataset.months === '0') {
+        if ((btn as HTMLElement).dataset.months === '3') {
             btn.classList.add('active');
         }
     });

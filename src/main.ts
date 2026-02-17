@@ -2,7 +2,7 @@ import { churchtoolsClient } from '@churchtools/churchtools-client';
 
 // Import modules
 import { loadInitialData } from './api';
-import { showStatus, populateGroupSelect, populateServiceCheckboxes, setDefaultDates } from './ui';
+import { showStatus, populateServiceCheckboxes, setDefaultDates } from './ui';
 import { elements } from './state';
 import { setupEventListeners } from './events';
 
@@ -32,11 +32,10 @@ if (import.meta.env.MODE === 'development' && username && password) {
 async function initApp() {
     try {
         await loadInitialData();
-        populateGroupSelect();
         populateServiceCheckboxes();
         setDefaultDates();
 
-        elements.groupSelect.disabled = false;
+        elements.groupSearch.disabled = false;
         elements.searchBtn.disabled = false;
     } catch (error) {
         showStatus('Fehler beim Laden der Daten: ' + (error instanceof Error ? error.message : 'Unbekannter Fehler'), 'error');

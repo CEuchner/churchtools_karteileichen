@@ -14,10 +14,18 @@
             <div class="form-section">
                 <div class="form-column-left">
                     <div class="form-group">
-                        <label for="groupSelect">Gruppe *</label>
-                        <select id="groupSelect" disabled>
-                            <option value="">-- Gruppe wählen --</option>
-                        </select>
+                        <label for="groupSearch">Gruppe *</label>
+                        <div class="autocomplete">
+                            <input
+                                type="text"
+                                id="groupSearch"
+                                class="group-search"
+                                placeholder="Gruppe suchen..."
+                                autocomplete="off"
+                                disabled
+                            />
+                            <div id="groupSuggestions" class="autocomplete-list" role="listbox"></div>
+                        </div>
                     </div>
 
                     <div class="form-group">
@@ -36,6 +44,9 @@
                                 <label for="dateFrom" style="margin-bottom: 0;">Von</label>
                                 <input type="date" id="dateFrom" />
                                 <div style="display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap;">
+                                    <button type="button" class="btn-quick btn-quick-from" data-months="0">Heute</button>
+                                    <button type="button" class="btn-quick btn-quick-from" data-months="1">vor 1M</button>
+                                    <button type="button" class="btn-quick btn-quick-from" data-months="2">vor 2M</button>
                                     <button type="button" class="btn-quick btn-quick-from" data-months="3">vor 3M</button>
                                     <button type="button" class="btn-quick btn-quick-from" data-months="6">vor 6M</button>
                                     <button type="button" class="btn-quick btn-quick-from" data-months="12">vor 12M</button>
@@ -49,6 +60,8 @@
                                     <button type="button" class="btn-quick btn-quick-to" data-months="1">+1M</button>
                                     <button type="button" class="btn-quick btn-quick-to" data-months="2">+2M</button>
                                     <button type="button" class="btn-quick btn-quick-to" data-months="3">+3M</button>
+                                    <button type="button" class="btn-quick btn-quick-to" data-months="6">+6M</button>
+                                    <button type="button" class="btn-quick btn-quick-to" data-months="12">+12M</button>
                                 </div>
                             </div>
                         </div>
@@ -85,8 +98,17 @@
             <div class="modal-content">
                 <h3>Zu Gruppe hinzufügen</h3>
                 <div class="form-group">
-                    <label for="targetGroupSelect">Zielgruppe auswählen:</label>
-                    <select id="targetGroupSelect"></select>
+                    <label for="targetGroupSearch">Zielgruppe auswählen:</label>
+                    <div class="autocomplete">
+                        <input
+                            type="text"
+                            id="targetGroupSearch"
+                            class="group-search"
+                            placeholder="Zielgruppe suchen..."
+                            autocomplete="off"
+                        />
+                        <div id="targetGroupSuggestions" class="autocomplete-list" role="listbox"></div>
+                    </div>
                 </div>
                 <div class="modal-buttons">
                     <button id="modalCancelBtn" class="btn-secondary">Abbrechen</button>
