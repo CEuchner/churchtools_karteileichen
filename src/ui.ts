@@ -1,5 +1,52 @@
 import { state, elements } from './state';
 import type { InactivePersonData } from './state';
+import type { Service } from './utils/ct-types';
+
+// Check if a service is visible based on user permissions
+function isServiceVisible(service: Service): boolean {
+    const perms = state.userPermissions;
+    if (!perms) return true; // If permissions not loaded, show all (fallback)
+
+    // 0. Check if service group has viewAll=true (public to everyone)
+    if (service.serviceGroupId) {
+        const serviceGroup = state.serviceGroups.find(sg => sg.id === service.serviceGroupId);
+        if (serviceGroup?.viewAll) {
+            return true;
+        }
+    }
+
+    // 1. Check global permission: user can view entire service group
+    if (service.serviceGroupId && perms.globalServiceGroupIds.includes(service.serviceGroupId)) {
+        return true;
+    }
+
+    // 2. Check group-internal permissions (additive across all user groups)
+    for (const userGroupId of perms.userGroupIds) {
+        const groupPerms = perms.groupPermissions.get(userGroupId);
+        if (!groupPerms) continue;
+
+        // Check if this service is restricted to specific groups
+        const serviceGroupIds = service.groupIds || [];
+        const isServiceInUserGroup = serviceGroupIds.length === 0 || serviceGroupIds.includes(userGroupId);
+
+        if (!isServiceInUserGroup) continue;
+
+        // If user has +edit service in this group, show the service
+        if (groupPerms.editService) {
+            return true;
+        }
+
+        // If user has +view service AND user has one of the service's tags, show the service
+        if (groupPerms.viewService) {
+            const serviceTagIds = service.tagIds || [];
+            if (serviceTagIds.length === 0 || serviceTagIds.some(tagId => perms.userTagIds.includes(tagId))) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
 
 // Show status message
 export function showStatus(message: string, type: 'loading' | 'error' | 'success') {
@@ -104,14 +151,17 @@ export function clearTargetGroupSelection() {
 export function populateServiceCheckboxes() {
     elements.serviceCheckboxes.innerHTML = '';
 
-    if (state.services.length === 0) {
+    // Filter services based on user permissions
+    const visibleServices = state.services.filter(service => isServiceVisible(service));
+
+    if (visibleServices.length === 0) {
         elements.serviceCheckboxes.innerHTML = '<p style="color: #999; font-size: 14px; padding: 12px;">Keine Dienste verfügbar</p>';
         return;
     }
 
     // Group services by serviceGroupId
-    const groupedServices = new Map<number | undefined, typeof state.services>();
-    state.services.forEach(service => {
+    const groupedServices = new Map<number | undefined, typeof visibleServices>();
+    visibleServices.forEach(service => {
         const groupId = service.serviceGroupId;
         if (!groupedServices.has(groupId)) {
             groupedServices.set(groupId, []);

@@ -5,6 +5,7 @@ Find inactive group members who haven't performed specific services within a con
 ## Features
 
 ✅ **Autocomplete Group Search** - Type to search groups with real-time suggestions and keyboard navigation  
+✅ **Permission-Based Service Filtering** - Only shows services you're authorized to view based on ChurchTools permissions  
 ✅ **Service-Based Filtering** - Select multiple services to filter by  
 ✅ **Flexible Date Ranges** - Quick buttons (Heute, 1M-12M) or custom dates  
 ✅ **Smart Search** - Finds members who have NOT done ANY selected service in the timeframe  
@@ -159,12 +160,12 @@ The ZIP file will be created in the `releases/` directory and contains:
 
 ```
 src/
-├── main.ts              # Entry point & initialization (40 lines)
-├── state.ts             # State management & DOM references (35 lines)
-├── api.ts               # ChurchTools API calls (137 lines)
-├── ui.ts                # UI updates & DOM manipulation (266 lines)
-├── events.ts            # Event listener setup (237 lines)
-├── styles.css           # All styling (483 lines)
+├── main.ts              # Entry point & initialization (46 lines)
+├── state.ts             # State management & permissions (51 lines)
+├── api.ts               # API calls + pagination + permissions (247 lines)
+├── ui.ts                # UI updates + permission filtering (379 lines)
+├── events.ts            # Event listeners + keyboard navigation (389 lines)
+├── styles.css           # All styling + autocomplete (528 lines)
 ├── vite-env.d.ts        # TypeScript definitions
 └── utils/
     ├── ct-types.d.ts    # ChurchTools API types
@@ -179,12 +180,16 @@ src/
 
 ### API Endpoints Used
 
-- `GET /groups` - List all groups for dropdowns
-- `GET /servicegroups` - Service categories
-- `GET /services` - Complete service list
-- `GET /groups/{id}/members?pagesize=9999&personFields[]=email` - Group members with emails
-- `GET /events?from=...&to=...&include=eventServices` - Events with service assignments
-- `PUT /groups/{id}/members/{personId}` - Add person to group (note: PUT, not POST)
+- `GET /whoami` — Current user info with tags
+- `GET /groups?limit=200&page=X` — Load groups with pagination
+- `GET /groups?only_my_groups=true` — Load user's groups for permission checks
+- `GET /permissions/global` — Global permissions (view servicegroup)
+- `GET /permissions/internal/groups` — Group-internal permissions (+view/+edit service)
+- `GET /servicegroups?limit=200&page=X` — Load service categories with pagination
+- `GET /services` — Load all services (no pagination support)
+- `GET /groups/{id}/members?personFields[]=email&personFields[]=firstName&personFields[]=lastName&limit=200&page=X` — Group members with pagination
+- `GET /events?from=...&to=...&limit=100&page=X&include=eventServices` — Load events (limit 100 max)
+- `PUT /groups/{id}/members/{personId}` — Add person to group (note: PUT, not POST)
 
 ### Search Algorithm
 
@@ -251,5 +256,5 @@ See [PROJECT_STATUS.md](PROJECT_STATUS.md) for detailed technical documentation,
 
 ---
 
-**Version**: 1.0.2+  
-**Last Updated**: Feb 17, 2026
+**Version**: 1.0.3  
+**Last Updated**: Feb 18, 2026

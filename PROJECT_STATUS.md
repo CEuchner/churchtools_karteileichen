@@ -1,8 +1,8 @@
 # Project Status - Karteileichen (ChurchTools Extension)
 
-**Date:** 2026-02-17  
-**Version:** v1.0.2+  
-**Status:** ✅ COMPLETE & ENHANCED (Post-Testing Updates)
+**Date:** 2026-02-18  
+**Version:** v1.0.3  
+**Status:** ✅ COMPLETE & ENHANCED (All Priority Features Implemented)
 
 ## Development Process
 
@@ -68,20 +68,32 @@ ChurchTools extension to identify inactive group members who haven't performed s
 - Safety guards: MAX_PAGES=100, signature-based duplicate detection
 - Fixed `/services` endpoint (no pagination support)
 
+✅ **Permission-Based Service Filtering**
+- Implemented comprehensive permission system for service visibility
+- Loads user permissions from 4 endpoints: `/whoami`, `/groups?only_my_groups=true`, `/permissions/global`, `/permissions/internal/groups`
+- Filter logic respects:
+  - ServiceGroup `viewAll` flag (public for everyone)
+  - Global `view servicegroup` permissions
+  - Group-internal `+edit service` permissions (shows service regardless of tags)
+  - Group-internal `+view service` + matching user tags
+- Permissions are additive across all user groups
+- Only authorized services are displayed in the UI
+
 ✅ **Bug Fixes**
 - Fixed state reset issue in autocomplete (target group was reset when typing in main search)
 - Removed unused variable in events.ts (cleanup)
+- Fixed API response handling for permissions endpoints
 
 ## Technical Implementation
 
-### Files (v1.0.2+ - Enhanced)
-- **index.html** (~115 lines): UI structure with autocomplete inputs
-- **src/styles.css** (~520 lines): All styling including autocomplete overlays
-- **src/main.ts** (40 lines): Entry point & initialization
-- **src/state.ts** (~45 lines): State management, DOM refs, autocomplete state
-- **src/api.ts** (~200 lines): ChurchTools API calls with optimized pagination
-- **src/ui.ts** (~320 lines): UI updates, DOM manipulation, autocomplete rendering
-- **src/events.ts** (~390 lines): Event listeners with keyboard navigation
+### Files (v1.0.3 - Enhanced)
+- **index.html** (122 lines): UI structure with autocomplete inputs
+- **src/styles.css** (528 lines): All styling including autocomplete overlays
+- **src/main.ts** (46 lines): Entry point & initialization
+- **src/state.ts** (51 lines): State management, DOM refs, UserPermissions interface
+- **src/api.ts** (247 lines): ChurchTools API calls, pagination, permission loading
+- **src/ui.ts** (379 lines): UI updates, DOM manipulation, autocomplete, permission filtering
+- **src/events.ts** (389 lines): Event listeners with keyboard navigation
 - **src/utils/ct-types.d.ts**: Auto-generated API types
 
 ### Key Code Segments
@@ -106,10 +118,14 @@ ChurchTools extension to identify inactive group members who haven't performed s
 ```
 
 ### API Endpoints Used
+- `GET /whoami` — Current user info with tags
 - `GET /groups?limit=200&page=X` — Load groups with pagination
+- `GET /groups?only_my_groups=true` — Load user's groups for permission checks
+- `GET /permissions/global` — Global permissions (view servicegroup)
+- `GET /permissions/internal/groups` — Group-internal permissions (+view/+edit service)
 - `GET /servicegroups?limit=200&page=X` — Load service categories with pagination
 - `GET /services` — Load all services (no pagination support)
-- `GET /groups/{id}/members?pagesize=9999&personFields[]=email` — Load group members with email
+- `GET /groups/{id}/members?personFields[]=email&personFields[]=firstName&personFields[]=lastName&limit=200&page=X` — Group members with pagination
 - `GET /events?from=...&to=...&limit=100&page=X&include=eventServices` — Load events (limit 100 max)
 - `PUT /groups/{id}/members/{personId}` — Add person to group
 
@@ -165,23 +181,26 @@ npm run build   # Creates dist/ folder
 
 ## Future Enhancements (Optional)
 
-1. **Configurable Role Selection:** Let user choose group role during adding
-2. **Export Results:** CSV export of inactive members
-3. **Scheduling:** Save search criteria for repeated use
-4. **Person Activity Dashboard:** Show when each person last did a service
-5. **Notification:** Inform group leaders automaticallyabout inactive members
+**Next Priority:**
+- **User Preferences (KV-Store):** Save default date range, last group, favorite services
+- **Duplicate Handling:** Better UX when adding person already in group
 
-## File Structure (v1.0.1)
+**Additional Ideas:**
+- CSV export, configurable role selection, activity dashboard
+- Test suite (unit, integration, E2E)
+- Performance optimizations (code splitting, lazy loading, caching)
+
+## File Structure (v1.0.3)
 ```
 karteileichen/
-├── index.html              # UI template
+├── index.html              # UI template with autocomplete inputs
 ├── src/
 │   ├── main.ts            # Entry point (40 lines)
-│   ├── state.ts           # State management (35 lines)
-│   ├── api.ts             # API calls (137 lines)
-│   ├── ui.ts              # UI updates (266 lines)
-│   ├── events.ts          # Event listeners (237 lines)
-│   ├── styles.css         # All styling (483 lines)
+│   ├── state.ts           # State management + permissions (55 lines)
+│   ├── api.ts             # API calls + pagination + permissions (245 lines)
+│   ├── ui.ts              # UI updates + permission filtering (370 lines)
+│   ├── events.ts          # Event listeners + keyboard nav (390 lines)
+│   ├── styles.css         # All styling + autocomplete (520 lines)
 │   ├── utils/
 │   │   ├── ct-types.d.ts  # Generated API types
 │   │   └── reset.css      # Base styles
@@ -190,7 +209,9 @@ karteileichen/
 ├── vite.config.ts         # Build config
 ├── tsconfig.json          # TypeScript config
 ├── package.json           # Dependencies
-└── PROJECT_STATUS.md      # This file
+├── PROJECT_STATUS.md      # This file
+├── TESTING_CHECKLIST.md   # Testing & feature tracking
+└── key-value-store.md     # KV-Store API documentation
 ```
 
 ## Support
@@ -213,10 +234,11 @@ For ChurchTools documentation: https://www.church.tools
 ---
 
 **Changelog:**
+- **v1.0.3** (Feb 18, 2026): Permission-based service filtering, all top-3 priority features completed
 - **v1.0.2+** (Feb 17, 2026): Autocomplete group search, extended quick date buttons, API pagination optimization, bug fixes
 - **v1.0.2** (Feb 17, 2026): PUT fix for adding members
 - **v1.0.1** (Feb 15, 2026): Code refactoring to modular architecture
 - **v1.0.0** (Feb 14, 2026): Initial release
 
-**Last Updated:** Feb 17, 2026 (v1.0.2+ with enhancements)
+**Last Updated:** Feb 18, 2026 (v1.0.3 with permission-based filtering)
 

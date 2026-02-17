@@ -1,6 +1,7 @@
 import { churchtoolsClient } from '@churchtools/churchtools-client';
 import type { Group, Service, ServiceGroup, GroupMember, Event, Person } from './utils/ct-types';
 import { state } from './state';
+import type { UserPermissions } from './state';
 
 const DEFAULT_LIMIT = 200;
 const MAX_PAGES = 100;
@@ -64,9 +65,56 @@ async function fetchAllPages<T>(
     return results;
 }
 
+// Load user permissions
+export async function loadUserPermissions(): Promise<UserPermissions> {
+    try {
+        // 1. Get current user info with tags
+        const whoamiResponse = await churchtoolsClient.get<any>('/whoami');
+        const whoami = whoamiResponse.data || whoamiResponse;
+        const userId = whoami.id;
+        const userTagIds = (whoami.tags || []).map((tag: any) => tag.id);
+
+        // 2. Get user's groups
+        const userGroups = await fetchAllPages<Group>('/groups', 'only_my_groups=true');
+        const userGroupIds = userGroups.map(g => g.id);
+
+        // 3. Get global permissions
+        const globalPermsResponse = await churchtoolsClient.get<any>('/permissions/global');
+        const globalPerms = globalPermsResponse.data || globalPermsResponse;
+        const viewServiceGroupPerms = globalPerms?.churchservice?.['view servicegroup'] || [];
+        const globalServiceGroupIds = Array.isArray(viewServiceGroupPerms) ? viewServiceGroupPerms : [];
+
+        // 4. Get group-internal permissions
+        const internalPermsResponse = await churchtoolsClient.get<any>('/permissions/internal/groups');
+        const internalPerms = internalPermsResponse.data || internalPermsResponse;
+        const groupPermissions = new Map<number, { viewService: boolean; editService: boolean }>();
+
+        for (const groupId of userGroupIds) {
+            const perms = internalPerms?.[groupId]?.churchservice || {};
+            groupPermissions.set(groupId, {
+                viewService: perms['+view service'] === true,
+                editService: perms['+edit service'] === true,
+            });
+        }
+
+        return {
+            userId,
+            userGroupIds,
+            userTagIds,
+            globalServiceGroupIds,
+            groupPermissions,
+        };
+    } catch (error) {
+        throw new Error(error instanceof Error ? error.message : 'Fehler beim Laden der Berechtigungen');
+    }
+}
+
 // Load all data from ChurchTools
 export async function loadInitialData() {
     try {
+        // Load user permissions first
+        state.userPermissions = await loadUserPermissions();
+
         // Load groups
         state.groups = await fetchAllPages<Group>('/groups');
 

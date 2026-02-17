@@ -6,6 +6,17 @@ export interface InactivePersonData {
     selected: boolean;
 }
 
+export interface UserPermissions {
+    userId: number;
+    userGroupIds: number[];
+    userTagIds: number[];
+    globalServiceGroupIds: number[];
+    groupPermissions: Map<number, {
+        viewService: boolean;
+        editService: boolean;
+    }>;
+}
+
 // Global State
 export const state = {
     groups: [] as Group[],
@@ -14,6 +25,7 @@ export const state = {
     inactivePersons: [] as InactivePersonData[],
     selectedGroupId: '',
     selectedTargetGroupId: '',
+    userPermissions: null as UserPermissions | null,
 };
 
 // DOM Elements
