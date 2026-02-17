@@ -357,7 +357,6 @@ export function setDateTo(monthsAhead: number) {
 
 // Set default dates and buttons
 export function setDefaultDates() {
-    const today = new Date();
     const sixMonthsAgo = new Date();
     sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
     const threeMonthsAhead = new Date();
