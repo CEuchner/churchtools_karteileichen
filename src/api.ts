@@ -219,19 +219,24 @@ export async function addPersonsToGroup(targetGroupId: string, personIds: number
     let successCount = 0;
     let errorCount = 0;
     let permissionErrors = 0;
+    let alreadyMembers = 0;
     const otherErrors: string[] = [];
 
     for (const personId of personIds) {
         try {
             await churchtoolsClient.put(`/groups/${targetGroupId}/members/${personId}`, {
-                groupMemberStatus: 'active',
+                "only_add": true,
             });
             successCount++;
         } catch (err: any) {
             errorCount++;
             // Check if it's a permission error (HTTP 403)
             if (err?.response?.status === 403) {
-                permissionErrors++;
+                if (err?.response?.data?.message === 'Person is already a member of the group') {
+                    alreadyMembers++;
+                } else {
+                    permissionErrors++;
+                }
             } else {
                 const errorMsg = err?.response?.data?.message || err?.message || 'Unbekannter Fehler';
                 if (!otherErrors.includes(errorMsg)) {
@@ -242,5 +247,5 @@ export async function addPersonsToGroup(targetGroupId: string, personIds: number
         }
     }
 
-    return { successCount, errorCount, permissionErrors, otherErrors };
+    return { successCount, errorCount, permissionErrors, alreadyMembers, otherErrors };
 }

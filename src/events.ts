@@ -345,7 +345,7 @@ function setupModalButtons(): void {
 
         try {
             const personIds = selectedPersons.map(p => p.person.id);
-            const { successCount, errorCount, permissionErrors, otherErrors } = await addPersonsToGroup(
+            const { successCount, errorCount, permissionErrors, alreadyMembers,otherErrors } = await addPersonsToGroup(
                 targetGroupId,
                 personIds
             );
@@ -357,6 +357,9 @@ function setupModalButtons(): void {
                 );
             } else {
                 let errorMessage = `⚠️ ${successCount} erfolgreich, ${errorCount} fehlgeschlagen`;
+                if (alreadyMembers > 0) {
+                    errorMessage += ` (${alreadyMembers} Person${alreadyMembers !== 1 ? 'en' : ''} bereits Mitglied)`;
+                }
                 if (permissionErrors > 0) {
                     errorMessage += ` (${permissionErrors}× keine Berechtigung dieser Gruppe Personen hinzuzufügen)`;
                 }
