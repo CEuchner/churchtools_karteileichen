@@ -255,7 +255,8 @@ For ChurchTools documentation: https://www.church.tools
 ---
 
 **Changelog:**
- - **v1.0.6** (Feb 24, 2026): Scoped CSS and modal integration fixes; runtime scoping; parallelized initial data loads; packaging fix; stability improvements.
+- **v1.0.6** (Feb 24, 2026): .
+ - **v1.0.5** (Feb 24, 2026): Scoped CSS and modal integration fixes; runtime scoping; parallelized initial data loads; packaging fix; stability improvements.
  - **v1.0.4** (Feb 18, 2026): Added Message for the case people are already member of group 
  - **v1.0.3** (Feb 18, 2026): Permission-based service filtering, all top-3 priority features completed
 - **v1.0.2+** (Feb 17, 2026): Autocomplete group search, extended quick date buttons, API pagination optimization, bug fixes
