@@ -1,7 +1,7 @@
 # Project Status - Karteileichen (ChurchTools Extension)
 
 **Date:** 2026-02-24  
-**Version:** v1.0.5  
+**Version:** v1.0.6  
 **Status:** ✅ COMPLETE & ENHANCED (All Priority Features Implemented)
 
 ## Development Process
@@ -255,7 +255,7 @@ For ChurchTools documentation: https://www.church.tools
 ---
 
 **Changelog:**
- - **v1.0.5** (Feb 24, 2026): Scoped CSS and modal integration fixes; runtime scoping; parallelized initial data loads; packaging fix; stability improvements.
+ - **v1.0.6** (Feb 24, 2026): Scoped CSS and modal integration fixes; runtime scoping; parallelized initial data loads; packaging fix; stability improvements.
  - **v1.0.4** (Feb 18, 2026): Added Message for the case people are already member of group 
  - **v1.0.3** (Feb 18, 2026): Permission-based service filtering, all top-3 priority features completed
 - **v1.0.2+** (Feb 17, 2026): Autocomplete group search, extended quick date buttons, API pagination optimization, bug fixes
@@ -263,5 +263,5 @@ For ChurchTools documentation: https://www.church.tools
 - **v1.0.1** (Feb 15, 2026): Code refactoring to modular architecture
 - **v1.0.0** (Feb 14, 2026): Initial release
 
-**Last Updated:** Feb 24, 2026 (v1.0.5)
+**Last Updated:** Feb 24, 2026 (v1.0.6)
 
