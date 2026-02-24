@@ -1,16 +1,17 @@
-* {
+
+.karteileichen-root, .karteileichen-root * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-body {
+.karteileichen-root {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     background: white;
     padding: 0;
 }
 
-.container {
+.karteileichen-root .container, .container.karteileichen-root {
     max-width: 1200px;
     margin: 0 auto;
     background: white;
@@ -19,19 +20,19 @@ body {
     padding: 30px;
 }
 
-h1 {
+.karteileichen-root h1 {
     color: #333;
     margin-bottom: 10px;
     font-size: 28px;
 }
 
-.subtitle {
+.karteileichen-root .subtitle {
     color: #666;
     margin-bottom: 30px;
     font-size: 14px;
 }
 
-.form-section {
+.karteileichen-root .form-section {
     display: grid;
     grid-template-columns: 1.5fr 1fr;
     gap: 30px;
@@ -39,24 +40,24 @@ h1 {
 }
 
 @media (max-width: 768px) {
-    .form-section {
+    .karteileichen-root .form-section {
         grid-template-columns: 1fr;
     }
 }
 
-.form-column-left {
+.karteileichen-root .form-column-left {
     display: flex;
     flex-direction: column;
     gap: 20px;
 }
 
-.form-column-right {
+.karteileichen-root .form-column-right {
     display: flex;
     flex-direction: column;
     gap: 20px;
 }
 
-.form-section > div > .form-group {
+.karteileichen-root .form-section > div > .form-group {
     background: #fafafa;
     padding: 16px;
     border: 1px solid #e0e0e0;
@@ -64,28 +65,28 @@ h1 {
 }
 
 @media (max-width: 768px) {
-    .form-column-left {
+    .karteileichen-root .form-column-left {
         order: 1;
     }
 
-    .form-column-right {
+    .karteileichen-root .form-column-right {
         order: 2;
     }
 }
 
-.form-group {
+.karteileichen-root .form-group {
     display: flex;
     flex-direction: column;
 }
 
-label {
+.karteileichen-root label {
     font-weight: 600;
     color: #333;
     margin-bottom: 8px;
     font-size: 14px;
 }
 
-select, input[type="date"], input[type="text"] {
+.karteileichen-root select, .karteileichen-root input[type="date"], .karteileichen-root input[type="text"] {
     padding: 10px 12px;
     border: 1px solid #ddd;
     border-radius: 4px;
@@ -94,19 +95,19 @@ select, input[type="date"], input[type="text"] {
     max-width: 100%;
 }
 
-.form-group select {
+.karteileichen-root .form-group select {
     max-width: 300px;
 }
 
-.group-search {
+.karteileichen-root .group-search {
     width: 100%;
 }
 
-.autocomplete {
+.karteileichen-root .autocomplete {
     position: relative;
 }
 
-.autocomplete-list {
+.karteileichen-root .autocomplete-list {
     position: absolute;
     top: calc(100% + 4px);
     left: 0;
@@ -121,51 +122,51 @@ select, input[type="date"], input[type="text"] {
     z-index: 20;
 }
 
-.autocomplete-list.is-open {
+.karteileichen-root .autocomplete-list.is-open {
     display: block;
 }
 
-.autocomplete-item {
+.karteileichen-root .autocomplete-item {
     padding: 10px 12px;
     cursor: pointer;
     font-size: 14px;
     color: #333;
 }
 
-.autocomplete-item:hover,
-.autocomplete-item.active {
+.karteileichen-root .autocomplete-item:hover,
+.karteileichen-root .autocomplete-item.active {
     background: #e8f0ff;
 }
 
-.autocomplete-empty {
+.karteileichen-root .autocomplete-empty {
     padding: 10px 12px;
     color: #666;
     font-size: 13px;
 }
 
-select:focus, input[type="date"]:focus, input[type="text"]:focus {
+.karteileichen-root select:focus, .karteileichen-root input[type="date"]:focus, .karteileichen-root input[type="text"]:focus {
     outline: none;
     border-color: #0066cc;
     box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.1);
 }
 
-.date-range {
+.karteileichen-root .date-range {
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
 
-.date-range .form-group {
+.karteileichen-root .date-range .form-group {
     flex: 1;
 }
 
-.button-group {
+.karteileichen-root .button-group {
     display: flex;
     gap: 10px;
     margin-top: 20px;
 }
 
-button {
+.karteileichen-root button {
     padding: 12px 24px;
     font-size: 16px;
     font-weight: 600;
@@ -175,33 +176,33 @@ button {
     transition: all 0.2s;
 }
 
-.btn-primary {
+.karteileichen-root .btn-primary {
     background: #0066cc;
     color: white;
     border-radius: 8px;
 }
 
-.btn-primary:hover {
+.karteileichen-root .btn-primary:hover {
     background: #0052a3;
 }
 
-.btn-primary:disabled {
+.karteileichen-root .btn-primary:disabled {
     background: #ccc;
     cursor: not-allowed;
 }
 
-.btn-secondary {
+.karteileichen-root .btn-secondary {
     background: #f0f0f0;
     color: #333;
     border: 1px solid #ddd;
     border-radius: 8px;
 }
 
-.btn-secondary:hover {
+.karteileichen-root .btn-secondary:hover {
     background: #e8e8e8;
 }
 
-.btn-quick {
+.karteileichen-root .btn-quick {
     padding: 6px 12px;
     font-size: 12px;
     font-weight: 500;
@@ -213,23 +214,23 @@ button {
     transition: all 0.2s;
 }
 
-.btn-quick:hover {
+.karteileichen-root .btn-quick:hover {
     background: #e0e0e0;
     border-color: #999;
 }
 
-.btn-quick.active {
+.karteileichen-root .btn-quick.active {
     background: #0066cc;
     color: white;
     border-color: #0066cc;
     font-weight: 600;
 }
 
-.btn-quick.active:hover {
+.karteileichen-root .btn-quick.active:hover {
     background: #0052a3;
 }
 
-.service-checkboxes {
+.karteileichen-root .service-checkboxes {
     display: flex;
     flex-direction: column;
     gap: 0;
@@ -242,7 +243,7 @@ button {
     overflow-y: auto;
 }
 
-.service-group-header {
+.karteileichen-root .service-group-header {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -254,15 +255,15 @@ button {
     margin-top: 16px;
 }
 
-.service-group-header:first-child {
+.karteileichen-root .service-group-header:first-child {
     margin-top: 0;
 }
 
-.service-group-header:hover {
+.karteileichen-root .service-group-header:hover {
     background: #d4e4ff;
 }
 
-.service-group-toggle {
+.karteileichen-root .service-group-toggle {
     display: inline-block;
     width: 16px;
     height: 16px;
@@ -270,18 +271,18 @@ button {
     flex-shrink: 0;
 }
 
-.service-group-header.collapsed .service-group-toggle {
+.karteileichen-root .service-group-header.collapsed .service-group-toggle {
     transform: rotate(-90deg);
 }
 
-.service-group-header input[type="checkbox"] {
+.karteileichen-root .service-group-header input[type="checkbox"] {
     width: 20px;
     height: 20px;
     flex-shrink: 0;
     cursor: pointer;
 }
 
-.service-group-header label {
+.karteileichen-root .service-group-header label {
     font-weight: 600;
     color: #0066cc;
     margin: 0;
@@ -289,7 +290,7 @@ button {
     font-size: 15px;
 }
 
-.service-group-items {
+.karteileichen-root .service-group-items {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 0;
@@ -297,15 +298,15 @@ button {
     transition: max-height 0.3s ease, padding 0.3s ease, opacity 0.3s ease;
 }
 
-.service-group-items.collapsed {
+.karteileichen-root .service-group-items.collapsed {
     display: none;
 }
 
-.service-checkboxes > .service-group-header:not(:first-child) {
+.karteileichen-root .service-checkboxes > .service-group-header:not(:first-child) {
     border-top: 1px solid #ddd;
 }
 
-.service-checkbox-item {
+.karteileichen-root .service-checkbox-item {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -315,32 +316,32 @@ button {
     transition: background 0.2s;
 }
 
-.service-checkbox-item:hover {
+.karteileichen-root .service-checkbox-item:hover {
     background: #f0f0f0;
 }
 
-.service-checkbox-item input[type="checkbox"] {
+.karteileichen-root .service-checkbox-item input[type="checkbox"] {
     cursor: pointer;
     width: 18px;
     height: 18px;
 }
 
-.service-checkbox-item label {
+.karteileichen-root .service-checkbox-item label {
     cursor: pointer;
     margin: 0;
     font-weight: normal;
 }
 
-.results-section {
+.karteileichen-root .results-section {
     margin-top: 40px;
     display: none;
 }
 
-.results-section.active {
+.karteileichen-root .results-section.active {
     display: block;
 }
 
-.results-header {
+.karteileichen-root .results-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -349,12 +350,12 @@ button {
     border-bottom: 2px solid #0066cc;
 }
 
-.results-header h2 {
+.karteileichen-root .results-header h2 {
     color: #333;
     font-size: 20px;
 }
 
-.result-count {
+.karteileichen-root .result-count {
     background: #0066cc;
     color: white;
     padding: 4px 12px;
@@ -363,14 +364,14 @@ button {
     font-size: 14px;
 }
 
-.results-header-right {
+.karteileichen-root .results-header-right {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
     gap: 12px;
 }
 
-.select-all {
+.karteileichen-root .select-all {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -379,7 +380,7 @@ button {
     cursor: pointer;
 }
 
-.select-all input[type="checkbox"] {
+.karteileichen-root .select-all input[type="checkbox"] {
     width: 20px;
     height: 20px;
     cursor: pointer;
@@ -388,19 +389,19 @@ button {
     line-height: 1;
 }
 
-.select-all span {
+.karteileichen-root .select-all span {
     order: 1;
     margin: 0;
     line-height: 1.4;
 }
 
-.person-list {
+.karteileichen-root .person-list {
     display: flex;
     flex-direction: column;
     gap: 12px;
 }
 
-.person-card {
+.karteileichen-root .person-card {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -411,59 +412,59 @@ button {
     transition: background 0.2s;
 }
 
-.person-card:hover {
+.karteileichen-root .person-card:hover {
     background: #f0f0f0;
 }
 
-.person-info h3 {
+.karteileichen-root .person-info h3 {
     color: #333;
     font-size: 16px;
     margin-bottom: 4px;
 }
 
-.person-info p {
+.karteileichen-root .person-info p {
     color: #666;
     font-size: 13px;
 }
 
-.person-checkbox {
+.karteileichen-root .person-checkbox {
     width: 20px;
     height: 20px;
     cursor: pointer;
 }
 
-.status-message {
+.karteileichen-root .status-message {
     padding: 12px;
     border-radius: 4px;
     margin-bottom: 20px;
     font-size: 14px;
 }
 
-.status-loading {
+.karteileichen-root .status-loading {
     background: #e3f2fd;
     color: #0066cc;
     border: 1px solid #90caf9;
 }
 
-.status-error {
+.karteileichen-root .status-error {
     background: #ffebee;
     color: #c62828;
     border: 1px solid #ef5350;
 }
 
-.status-success {
+.karteileichen-root .status-success {
     background: #e8f5e9;
     color: #2e7d32;
     border: 1px solid #81c784;
 }
 
-.action-buttons {
+.karteileichen-root .action-buttons {
     display: flex;
     gap: 10px;
     margin-top: 20px;
 }
 
-.loading-spinner {
+.karteileichen-root .loading-spinner {
     display: inline-block;
     width: 16px;
     height: 16px;
@@ -484,7 +485,8 @@ button {
     }
 }
 
-.modal-overlay {
+.karteileichen-root .modal-overlay,
+.karteileichen-root.modal-overlay {
     display: none;
     position: fixed;
     top: 0;
@@ -496,12 +498,15 @@ button {
     align-items: center;
     justify-content: center;
 }
-
-.modal-overlay.active {
+.karteileichen-root .modal-overlay.active,
+.karteileichen-root.modal-overlay.active,
+.karteileichen-root.modal-overlay.modal-overlay.active {
     display: flex;
 }
 
-.modal-content {
+.karteileichen-root .modal-content,
+.karteileichen-root.modal-overlay .modal-content,
+.karteileichen-root.modal-content {
     background: white;
     padding: 30px;
     border-radius: 8px;
@@ -510,17 +515,17 @@ button {
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
-.modal-content h3 {
+.karteileichen-root .modal-content h3 {
     margin-top: 0;
     margin-bottom: 20px;
     color: #333;
 }
 
-.modal-content .form-group {
+.karteileichen-root .modal-content .form-group {
     margin-bottom: 20px;
 }
 
-.modal-buttons {
+.karteileichen-root .modal-buttons {
     display: flex;
     gap: 10px;
     justify-content: flex-end;

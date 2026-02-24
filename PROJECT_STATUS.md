@@ -1,7 +1,7 @@
 # Project Status - Karteileichen (ChurchTools Extension)
 
-**Date:** 2026-02-18  
-**Version:** v1.0.4  
+**Date:** 2026-02-24  
+**Version:** v1.0.5  
 **Status:** ✅ COMPLETE & ENHANCED (All Priority Features Implemented)
 
 ## Development Process
@@ -83,6 +83,13 @@ ChurchTools extension to identify inactive group members who haven't performed s
 - Fixed state reset issue in autocomplete (target group was reset when typing in main search)
 - Removed unused variable in events.ts (cleanup)
 - Fixed API response handling for permissions endpoints
+
+✅ **Production Stability & Integration Fixes (Feb 22-24)**
+- Scoped extension CSS under `.karteileichen-root` and added attribute fallbacks (`[data-ct-extension="karteileichen"]`) to prevent style leakage into ChurchTools host UI.
+- Added high-specificity modal fallbacks and ID-based overrides so the `#groupModal` remains styled even when rendered outside the extension container or when host strips classes.
+- Runtime scoping: do not add global `body` classes; instead mark only the extension container and modal at runtime to keep host styles intact.
+- Parallelized initial data loads (`loadInitialData` and `loadUserPermissions`) to reduce startup latency.
+- Packaging fix: ZIP now places `index.html` and `assets/` at the archive root for ChurchTools upload compatibility.
 
 ## Technical Implementation
 
@@ -234,12 +241,13 @@ For ChurchTools documentation: https://www.church.tools
 ---
 
 **Changelog:**
-- **v1.0.4** (Feb 18, 2026): Added Message for the case people are already member of group 
-- **v1.0.3** (Feb 18, 2026): Permission-based service filtering, all top-3 priority features completed
+ - **v1.0.5** (Feb 24, 2026): Scoped CSS and modal integration fixes; runtime scoping; parallelized initial data loads; packaging fix; stability improvements.
+ - **v1.0.4** (Feb 18, 2026): Added Message for the case people are already member of group 
+ - **v1.0.3** (Feb 18, 2026): Permission-based service filtering, all top-3 priority features completed
 - **v1.0.2+** (Feb 17, 2026): Autocomplete group search, extended quick date buttons, API pagination optimization, bug fixes
 - **v1.0.2** (Feb 17, 2026): PUT fix for adding members
 - **v1.0.1** (Feb 15, 2026): Code refactoring to modular architecture
 - **v1.0.0** (Feb 14, 2026): Initial release
 
-**Last Updated:** Feb 18, 2026 (v1.0.3 with permission-based filtering)
+**Last Updated:** Feb 24, 2026 (v1.0.5)
 

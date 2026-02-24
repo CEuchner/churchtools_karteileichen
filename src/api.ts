@@ -68,24 +68,32 @@ async function fetchAllPages<T>(
 // Load user permissions
 export async function loadUserPermissions(): Promise<UserPermissions> {
     try {
-        // 1. Get current user info with tags
-        const whoamiResponse = await churchtoolsClient.get<any>('/whoami');
+
+        // Start independent requests in parallel to reduce latency. We keep
+        // the console timers for visibility.
+        const whoamiPromise = churchtoolsClient.get<any>('/whoami');
+        const userGroupsPromise = fetchAllPages<Group>('/groups', 'only_my_groups=true');
+        const globalPermsPromise = churchtoolsClient.get<any>('/permissions/global');
+        const internalPermsPromise = churchtoolsClient.get<any>('/permissions/internal/groups');
+
+        const [whoamiResponse, userGroups, globalPermsResponse, internalPermsResponse] = await Promise.all([
+            whoamiPromise,
+            userGroupsPromise,
+            globalPermsPromise,
+            internalPermsPromise,
+        ]);
+
+
         const whoami = whoamiResponse.data || whoamiResponse;
         const userId = whoami.id;
         const userTagIds = (whoami.tags || []).map((tag: any) => tag.id);
 
-        // 2. Get user's groups
-        const userGroups = await fetchAllPages<Group>('/groups', 'only_my_groups=true');
         const userGroupIds = userGroups.map(g => g.id);
 
-        // 3. Get global permissions
-        const globalPermsResponse = await churchtoolsClient.get<any>('/permissions/global');
         const globalPerms = globalPermsResponse.data || globalPermsResponse;
         const viewServiceGroupPerms = globalPerms?.churchservice?.['view servicegroup'] || [];
         const globalServiceGroupIds = Array.isArray(viewServiceGroupPerms) ? viewServiceGroupPerms : [];
 
-        // 4. Get group-internal permissions
-        const internalPermsResponse = await churchtoolsClient.get<any>('/permissions/internal/groups');
         const internalPerms = internalPermsResponse.data || internalPermsResponse;
         const groupPermissions = new Map<number, { viewService: boolean; editService: boolean }>();
 
@@ -115,14 +123,24 @@ export async function loadInitialData() {
         // Load user permissions first
         state.userPermissions = await loadUserPermissions();
 
-        // Load groups
-        state.groups = await fetchAllPages<Group>('/groups');
+        // Load groups, service groups and services in parallel to reduce
+        // total startup time. `userPermissions` must be available first,
+        // but the three dataset endpoints are independent and can be
+        // fetched concurrently.
+        const groupsPromise = fetchAllPages<Group>('/groups');
+        const serviceGroupsPromise = fetchAllPages<ServiceGroup>('/servicegroups');
+        const servicesPromise = fetchAllPages<Service>('/services', '', { supportsPagination: false });
 
-        // Load service groups
-        state.serviceGroups = await fetchAllPages<ServiceGroup>('/servicegroups');
+        const [groups, serviceGroups, services] = await Promise.all([
+            groupsPromise,
+            serviceGroupsPromise,
+            servicesPromise,
+        ]);
 
-        // Load services (no pagination support on this endpoint)
-        state.services = await fetchAllPages<Service>('/services', '', { supportsPagination: false });
+
+        state.groups = groups;
+        state.serviceGroups = serviceGroups;
+        state.services = services;
 
         return true;
     } catch (error) {

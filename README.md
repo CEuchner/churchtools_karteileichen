@@ -11,6 +11,7 @@ Find inactive group members who haven't performed specific services within a con
 ✅ **Smart Search** - Finds members who have NOT done ANY selected service in the timeframe  
 ✅ **Batch Operations** - Add multiple inactive members to another group at once  
 ✅ **Responsive Design** - Works on desktop and mobile devices  
+✅ **Scoped Styling & Host-Safe** - Styles are scoped to the extension (`.karteileichen-root`) with attribute fallbacks to avoid affecting ChurchTools host UI
 ✅ **Email Display** - Shows member email addresses for direct contact  
 ✅ **Detailed Feedback** - Clear error messages for permission or validation issues  
 ✅ **Optimized API** - Endpoint-specific pagination with safety guards  
@@ -256,5 +257,5 @@ See [PROJECT_STATUS.md](PROJECT_STATUS.md) for detailed technical documentation,
 
 ---
 
-**Version**: 1.0.4  
-**Last Updated**: Feb 19, 2026
+**Version**: 1.0.5  
+**Last Updated**: Feb 24, 2026 
