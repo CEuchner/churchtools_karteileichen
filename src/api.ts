@@ -68,50 +68,41 @@ async function fetchAllPages<T>(
 // Load user permissions
 export async function loadUserPermissions(): Promise<UserPermissions> {
     try {
-
-        // Start independent requests in parallel to reduce latency. We keep
-        // the console timers for visibility.
-        const whoamiPromise = churchtoolsClient.get<any>('/whoami');
-        const userGroupsPromise = fetchAllPages<Group>('/groups', 'only_my_groups=true');
-        const globalPermsPromise = churchtoolsClient.get<any>('/permissions/global');
-        const internalPermsPromise = churchtoolsClient.get<any>('/permissions/internal/groups');
-
-        const [whoamiResponse, userGroups, globalPermsResponse, internalPermsResponse] = await Promise.all([
-            whoamiPromise,
-            userGroupsPromise,
-            globalPermsPromise,
-            internalPermsPromise,
-        ]);
-
-
+        // 1. Get current user info
+        const whoamiResponse = await churchtoolsClient.get<any>('/whoami');
         const whoami = whoamiResponse.data || whoamiResponse;
         const userId = whoami.id;
-        const userTagIds = (whoami.tags || []).map((tag: any) => tag.id);
 
+        // 2. Get user's groups
+        const userGroups = await fetchAllPages<Group>('/groups', 'only_my_groups=true');
         const userGroupIds = userGroups.map(g => g.id);
 
+        // 3. Get global permissions
+        const globalPermsResponse = await churchtoolsClient.get<any>('/permissions/global');
         const globalPerms = globalPermsResponse.data || globalPermsResponse;
         const viewServiceGroupPerms = globalPerms?.churchservice?.['view servicegroup'] || [];
         const globalServiceGroupIds = Array.isArray(viewServiceGroupPerms) ? viewServiceGroupPerms : [];
 
+        // 4. Get group-internal permissions (only need to know which groups have +view service)
+        const internalPermsResponse = await churchtoolsClient.get<any>('/permissions/internal/groups');
         const internalPerms = internalPermsResponse.data || internalPermsResponse;
-        const groupPermissions = new Map<number, { viewService: boolean; editService: boolean }>();
+        const groupServiceGroupIds = new Set<number>();
 
         for (const groupId of userGroupIds) {
             const perms = internalPerms?.[groupId]?.churchservice || {};
-            groupPermissions.set(groupId, {
-                viewService: perms['+view service'] === true,
-                editService: perms['+edit service'] === true,
-            });
+            if (perms['+view service'] === true) {
+                groupServiceGroupIds.add(groupId);
+            }
         }
 
-        return {
+        const result: any = {
             userId,
             userGroupIds,
-            userTagIds,
             globalServiceGroupIds,
-            groupPermissions,
+            groupServiceGroupIds,
         };
+
+        return result as UserPermissions;
     } catch (error) {
         throw new Error(error instanceof Error ? error.message : 'Fehler beim Laden der Berechtigungen');
     }
@@ -123,24 +114,14 @@ export async function loadInitialData() {
         // Load user permissions first
         state.userPermissions = await loadUserPermissions();
 
-        // Load groups, service groups and services in parallel to reduce
-        // total startup time. `userPermissions` must be available first,
-        // but the three dataset endpoints are independent and can be
-        // fetched concurrently.
-        const groupsPromise = fetchAllPages<Group>('/groups');
-        const serviceGroupsPromise = fetchAllPages<ServiceGroup>('/servicegroups');
-        const servicesPromise = fetchAllPages<Service>('/services', '', { supportsPagination: false });
+        // Load groups
+        state.groups = await fetchAllPages<Group>('/groups');
 
-        const [groups, serviceGroups, services] = await Promise.all([
-            groupsPromise,
-            serviceGroupsPromise,
-            servicesPromise,
-        ]);
+        // Load service groups
+        state.serviceGroups = await fetchAllPages<ServiceGroup>('/servicegroups');
 
-
-        state.groups = groups;
-        state.serviceGroups = serviceGroups;
-        state.services = services;
+        // Load services (no pagination support on this endpoint)
+        state.services = await fetchAllPages<Service>('/services', '', { supportsPagination: false });
 
         return true;
     } catch (error) {

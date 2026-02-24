@@ -2,47 +2,74 @@ import { state, elements } from './state';
 import type { InactivePersonData } from './state';
 import type { Service } from './utils/ct-types';
 
+// Cached index for service-group -> aggregated groupIds and unrestricted flag
+let serviceGroupIndex: Map<number, { groupIds: Set<number>; hasUnrestricted: boolean }>|null = null;
+
+function buildServiceGroupIndex() {
+    if (serviceGroupIndex) return serviceGroupIndex;
+    const idx = new Map<number, { groupIds: Set<number>; hasUnrestricted: boolean }>();
+
+    state.services.forEach(s => {
+        const sgId = s.serviceGroupId as number | undefined;
+        if (sgId === undefined || sgId === null) return;
+
+        let entry = idx.get(sgId);
+        if (!entry) {
+            entry = { groupIds: new Set<number>(), hasUnrestricted: false };
+            idx.set(sgId, entry);
+        }
+
+        const svcGroupIds = s.groupIds || [];
+        if (svcGroupIds.length === 0) {
+            entry.hasUnrestricted = true;
+        } else {
+            svcGroupIds.forEach(gid => entry!.groupIds.add(gid));
+        }
+    });
+
+    serviceGroupIndex = idx;
+    return serviceGroupIndex;
+}
+
 // Check if a service is visible based on user permissions
 function isServiceVisible(service: Service): boolean {
     const perms = state.userPermissions;
     if (!perms) return true; // If permissions not loaded, show all (fallback)
 
-    // 0. Check if service group has viewAll=true (public to everyone)
+    // Delegate to service-group visibility. If service has no serviceGroupId,
+    // treat it as an invalid DB state and hide it (Option A).
     if (service.serviceGroupId) {
-        const serviceGroup = state.serviceGroups.find(sg => sg.id === service.serviceGroupId);
-        if (serviceGroup?.viewAll) {
-            return true;
-        }
+        return isServiceGroupVisible(service.serviceGroupId);
     }
 
-    // 1. Check global permission: user can view entire service group
-    if (service.serviceGroupId && perms.globalServiceGroupIds.includes(service.serviceGroupId)) {
-        return true;
-    }
+    return false;
+}
 
-    // 2. Check group-internal permissions (additive across all user groups)
-    for (const userGroupId of perms.userGroupIds) {
-        const groupPerms = perms.groupPermissions.get(userGroupId);
-        if (!groupPerms) continue;
+// Check if a service group is visible based on user permissions
+function isServiceGroupVisible(serviceGroupId: number): boolean {
+    const perms = state.userPermissions;
+    if (!perms) return true;
 
-        // Check if this service is restricted to specific groups
-        const serviceGroupIds = service.groupIds || [];
-        const isServiceInUserGroup = serviceGroupIds.length === 0 || serviceGroupIds.includes(userGroupId);
+    // public service group
+    const serviceGroup = state.serviceGroups.find(sg => sg.id === serviceGroupId);
+    if (serviceGroup?.viewAll) return true;
 
-        if (!isServiceInUserGroup) continue;
+    // global permission for this service group
+    if (perms.globalServiceGroupIds.includes(serviceGroupId)) return true;
 
-        // If user has +edit service in this group, show the service
-        if (groupPerms.editService) {
-            return true;
-        }
+    // check group-internal permissions: user must have +view service in at least
+    // one group that is assigned to a service inside this service group
+    const viewGroups = perms.groupServiceGroupIds;
+    if (!viewGroups || viewGroups.size === 0) return false;
 
-        // If user has +view service AND user has one of the service's tags, show the service
-        if (groupPerms.viewService) {
-            const serviceTagIds = service.tagIds || [];
-            if (serviceTagIds.length === 0 || serviceTagIds.some(tagId => perms.userTagIds.includes(tagId))) {
-                return true;
-            }
-        }
+    const idx = buildServiceGroupIndex();
+    const meta = idx.get(serviceGroupId);
+    if (!meta) return false;
+
+    if (meta.hasUnrestricted) return true;
+
+    for (const gid of meta.groupIds) {
+        if (viewGroups.has(gid)) return true;
     }
 
     return false;

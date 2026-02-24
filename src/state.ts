@@ -9,12 +9,8 @@ export interface InactivePersonData {
 export interface UserPermissions {
     userId: number;
     userGroupIds: number[];
-    userTagIds: number[];
     globalServiceGroupIds: number[];
-    groupPermissions: Map<number, {
-        viewService: boolean;
-        editService: boolean;
-    }>;
+    groupServiceGroupIds: Set<number>;
 }
 
 // Global State

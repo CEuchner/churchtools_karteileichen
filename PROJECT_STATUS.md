@@ -68,16 +68,19 @@ ChurchTools extension to identify inactive group members who haven't performed s
 - Safety guards: MAX_PAGES=100, signature-based duplicate detection
 - Fixed `/services` endpoint (no pagination support)
 
-✅ **Permission-Based Service Filtering**
-- Implemented comprehensive permission system for service visibility
-- Loads user permissions from 4 endpoints: `/whoami`, `/groups?only_my_groups=true`, `/permissions/global`, `/permissions/internal/groups`
-- Filter logic respects:
-  - ServiceGroup `viewAll` flag (public for everyone)
-  - Global `view servicegroup` permissions
-  - Group-internal `+edit service` permissions (shows service regardless of tags)
-  - Group-internal `+view service` + matching user tags
-- Permissions are additive across all user groups
-- Only authorized services are displayed in the UI
+✅ **Permission & Visibility Model (simplified, Feb 24, 2026)**
+- Visibility is evaluated on the *ServiceGroup* level. If a user may view a ServiceGroup, they may view all Services that belong to that ServiceGroup.
+- `loadUserPermissions()` now reads only the minimal required rights from ChurchTools:
+  - Global permission: `view servicegroup` (grants visibility to the entire ServiceGroup)
+  - Group-internal permission: `+view service` (per user group) — stored as a `Set` of group IDs (`groupServiceGroupIds`).
+- Decision order for ServiceGroup visibility:
+  1. `serviceGroup.viewAll` → visible to everyone
+  2. `globalServiceGroupIds` contains the ServiceGroup → visible
+  3. Otherwise: check whether at least one Service in the ServiceGroup is assigned to a user group for which the user has `+view service`.
+- Implementation notes:
+  - Per-Service tag checks and `+edit service`/`+entry` rights have been removed to match the simplified product decision: *only* `+view service` (or global `view servicegroup`) is required to view a ServiceGroup.
+  - For performance the UI builds a `serviceGroupIndex` that aggregates all `groupIds` of Services in a ServiceGroup and a `hasUnrestricted` flag; `isServiceGroupVisible()` uses this index for fast checks.
+  - Services without a `serviceGroupId` are treated as invalid DB state and hidden.
 
 ✅ **Bug Fixes**
 - Fixed state reset issue in autocomplete (target group was reset when typing in main search)

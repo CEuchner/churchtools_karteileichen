@@ -157,6 +157,15 @@ The ZIP file will be created in the `releases/` directory and contains:
 - **API Client**: `@churchtools/churchtools-client`
 - **Code Structure**: Modular (v1.0.1+ refactored)
 
+### Permission Model
+
+- Service visibility is determined at the ServiceGroup level:
+   1. `serviceGroup.viewAll` → visible to everyone
+   2. Global permission `view servicegroup` → visible
+   3. Otherwise: visible if at least one Service in the ServiceGroup is assigned to a user group for which the current user has `+view service`.
+
+- Tag-based checks and `+edit service` / `+entry` rights have been removed; the visibility logic has been simplified and is implemented at the ServiceGroup level in `ui.ts` (see `PROJECT_STATUS.md`).
+
 ### Key Files
 
 ```
