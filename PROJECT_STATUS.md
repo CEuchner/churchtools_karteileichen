@@ -102,6 +102,9 @@ ChurchTools extension to identify inactive group members who haven't performed s
   - Error: red sticky toast that remains until dismissed by the user using a close (✕) button.
 - Visual: toasts slide in from the right; styling is scoped to the extension to avoid host UI conflicts.
 
+✅ **Additional UI detail**
+  - Person email addresses in the search results are rendered as `mailto:` links and styled as clickable blue, underlined links.
+
 ## Technical Implementation
 
 ### Files (v1.0.3 - Enhanced)

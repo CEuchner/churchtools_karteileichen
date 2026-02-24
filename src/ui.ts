@@ -437,22 +437,43 @@ export function displayResults(persons: InactivePersonData[]) {
     persons.forEach((data, index) => {
         const card = document.createElement('div');
         card.className = 'person-card';
-        card.innerHTML = `
-            <div class="person-info">
-                <h3>${data.person.firstName} ${data.person.lastName}</h3>
-                <p>${data.person.email || 'Keine Email'}</p>
-            </div>
-            <input type="checkbox" class="person-checkbox" data-index="${index}" ${data.selected ? 'checked' : ''} />
-        `;
 
-        const checkbox = card.querySelector('input[type="checkbox"]') as HTMLInputElement;
+        const info = document.createElement('div');
+        info.className = 'person-info';
+
+        const h3 = document.createElement('h3');
+        h3.textContent = `${data.person.firstName} ${data.person.lastName}`;
+        info.appendChild(h3);
+
+        const p = document.createElement('p');
+        if (data.person.email && data.person.email !== 'Keine E-Mail hinterlegt') {
+            const a = document.createElement('a');
+            // encodeURIComponent for safety in href
+            a.href = `mailto:${encodeURIComponent(data.person.email)}`;
+            a.textContent = data.person.email;
+            p.appendChild(a);
+        } else {
+            p.textContent = 'Keine Email';
+        }
+        info.appendChild(p);
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.className = 'person-checkbox';
+        checkbox.dataset.index = index.toString();
+        checkbox.checked = !!data.selected;
+
+        card.appendChild(info);
+        card.appendChild(checkbox);
+
         card.addEventListener('click', (e) => {
             const target = e.target as HTMLElement;
-            if (target.tagName !== 'LABEL' && target.tagName !== 'INPUT') {
+            if (target.tagName !== 'LABEL' && target.tagName !== 'INPUT' && target.tagName !== 'A') {
                 checkbox.checked = !checkbox.checked;
                 checkbox.dispatchEvent(new Event('change', { bubbles: true }));
             }
         });
+
         checkbox.addEventListener('change', (e) => {
             state.inactivePersons[parseInt((e.target as HTMLInputElement).dataset.index || '0')].selected = (e.target as HTMLInputElement).checked;
             const selectedCount = state.inactivePersons.filter(person => person.selected).length;

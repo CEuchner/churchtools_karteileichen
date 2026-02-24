@@ -427,6 +427,15 @@
     font-size: 13px;
 }
 
+/* Make person email links clearly look like links (blue + underlined) */
+.karteileichen-root .person-info a {
+    color: #0066cc;
+    text-decoration: underline;
+}
+.karteileichen-root .person-info a:hover {
+    color: #0052a3;
+}
+
 .karteileichen-root .person-checkbox {
     width: 20px;
     height: 20px;

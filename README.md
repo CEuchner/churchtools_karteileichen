@@ -174,6 +174,10 @@ The ZIP file will be created in the `releases/` directory and contains:
    - Error: red sticky toast that must be dismissed by the user via a close (✕) button.
    - Toasts slide in from the right and are scoped to the extension to avoid interfering with ChurchTools host styles.
 
+### Emails in Results
+
+- Person email addresses shown in the results list are rendered as clickable `mailto:` links. Clicking an email opens the user's mail client. Links are styled blue and underlined for clarity.
+
 ### Key Files
 
 ```
