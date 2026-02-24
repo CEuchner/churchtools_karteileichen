@@ -166,6 +166,14 @@ The ZIP file will be created in the `releases/` directory and contains:
 
 - Tag-based checks and `+edit service` / `+entry` rights have been removed; the visibility logic has been simplified and is implemented at the ServiceGroup level in `ui.ts` (see `PROJECT_STATUS.md`).
 
+### Notifications
+
+- The extension uses top-right toast notifications for runtime messages and user feedback. Behavior:
+   - Loading: blue toast with spinner that remains visible until the operation finishes; repeated loading calls update the existing loading toast.
+   - Success: green toast that auto-dismisses after 5 seconds and shows a progress bar counting down the remaining time.
+   - Error: red sticky toast that must be dismissed by the user via a close (✕) button.
+   - Toasts slide in from the right and are scoped to the extension to avoid interfering with ChurchTools host styles.
+
 ### Key Files
 
 ```

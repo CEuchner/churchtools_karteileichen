@@ -440,6 +440,12 @@
     font-size: 14px;
 }
 
+/* Hide the inline statusMessage element (we use top-right toasts instead).
+   Keep element in DOM as a fallback but ensure it's not visible. */
+.karteileichen-root #statusMessage {
+    display: none !important;
+}
+
 .karteileichen-root .status-loading {
     background: #e3f2fd;
     color: #0066cc;
@@ -456,6 +462,96 @@
     background: #e8f5e9;
     color: #2e7d32;
     border: 1px solid #81c784;
+}
+
+/* Toast container (top-right) */
+.status-toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    z-index: 2000;
+}
+
+.status-toast {
+    min-width: 260px;
+    max-width: 420px;
+    padding: 12px 14px;
+    border-radius: 8px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    font-size: 14px;
+    position: relative;
+    transform: translateX(20px);
+    opacity: 0;
+    animation: toast-in 240ms cubic-bezier(.2,.9,.2,1) forwards;
+}
+
+.status-toast .status-toast-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1 1 auto;
+}
+
+.status-toast.status-loading { background: #e3f2fd; color: #0066cc; border: 1px solid #90caf9; }
+.status-toast.status-error { background: #ffebee; color: #c62828; border: 1px solid #ef5350; }
+.status-toast.status-success { background: #e8f5e9; color: #2e7d32; border: 1px solid #81c784; }
+
+.status-toast-close {
+    background: transparent;
+    border: none;
+    color: inherit;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 4px 6px;
+}
+
+/* keep existing spinner style for loading toasts */
+.status-toast .loading-spinner { margin-right: 8px; }
+
+/* Toast entrance animation */
+@keyframes toast-in {
+    from {
+        transform: translateX(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Progress bar for success toasts */
+.status-toast-progress {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 4px;
+    background: rgba(46,125,50,0.12);
+    width: 100%;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    overflow: hidden;
+}
+.status-toast-progress > .bar {
+    height: 100%;
+    background: #2e7d32;
+    width: 100%;
+    transform-origin: left;
+    animation-name: progress-shrink;
+    animation-timing-function: linear;
+    animation-fill-mode: forwards;
+}
+
+@keyframes progress-shrink {
+    from { width: 100%; }
+    to { width: 0%; }
 }
 
 .karteileichen-root .action-buttons {

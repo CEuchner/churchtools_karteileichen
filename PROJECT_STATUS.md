@@ -94,6 +94,14 @@ ChurchTools extension to identify inactive group members who haven't performed s
 - Parallelized initial data loads (`loadInitialData` and `loadUserPermissions`) to reduce startup latency.
 - Packaging fix: ZIP now places `index.html` and `assets/` at the archive root for ChurchTools upload compatibility.
 
+✅ **Notification UI (Feb 24, 2026)**
+- Replaced the inline status panel with top-right toast notifications for runtime messages and user feedback.
+- Toast behavior:
+  - Loading: blue toast with spinner — persistent until the operation completes; repeated loading messages update the existing loading toast instead of stacking.
+  - Success: green toast with a 5s auto-dismiss and an animated progress bar showing remaining time.
+  - Error: red sticky toast that remains until dismissed by the user using a close (✕) button.
+- Visual: toasts slide in from the right; styling is scoped to the extension to avoid host UI conflicts.
+
 ## Technical Implementation
 
 ### Files (v1.0.3 - Enhanced)

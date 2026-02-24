@@ -77,14 +77,111 @@ function isServiceGroupVisible(serviceGroupId: number): boolean {
 
 // Show status message
 export function showStatus(message: string, type: 'loading' | 'error' | 'success') {
-    elements.statusMessage.textContent = message;
-    elements.statusMessage.className = `status-message status-${type}`;
-    elements.statusMessage.style.display = 'block';
+    // Create or get the toast container in the document
+    let container = document.querySelector('.status-toast-container') as HTMLDivElement | null;
+    if (!container) {
+        container = document.createElement('div');
+        container.className = 'status-toast-container';
+        container.setAttribute('data-ct-extension', 'karteileichen');
+        document.body.appendChild(container);
+    }
+
+    const toast = document.createElement('div');
+    toast.className = `status-toast status-${type}`;
+    const content = document.createElement('div');
+    content.className = 'status-toast-content';
+
+    if (type === 'loading') {
+        // If a loading toast already exists, update its text instead of adding another
+        let existing = container.querySelector('.status-toast.status-loading') as HTMLDivElement | null;
+        if (existing) {
+            const existingContent = existing.querySelector('.status-toast-content');
+            if (existingContent) {
+                existingContent.textContent = '';
+                const spinner = document.createElement('span');
+                spinner.className = 'loading-spinner';
+                existingContent.appendChild(spinner);
+                const text = document.createElement('span');
+                text.textContent = message;
+                existingContent.appendChild(text);
+            }
+            return;
+        }
+
+        const spinner = document.createElement('span');
+        spinner.className = 'loading-spinner';
+        content.appendChild(spinner);
+        const text = document.createElement('span');
+        text.textContent = message;
+        content.appendChild(text);
+        toast.appendChild(content);
+        container.appendChild(toast);
+        // loading toasts stay until explicitly removed via hideStatus()
+        return;
+    }
+
+    // Remove any existing loading toasts when showing non-loading toasts
+    const existingLoading = container.querySelectorAll('.status-toast.status-loading');
+    existingLoading.forEach(el => el.remove());
+
+    // For success and error show message with optional close button
+    const text = document.createElement('span');
+    text.textContent = message;
+    content.appendChild(text);
+    toast.appendChild(content);
+
+    if (type === 'error') {
+        const closeBtn = document.createElement('button');
+        closeBtn.className = 'status-toast-close';
+        closeBtn.setAttribute('aria-label', 'Close');
+        closeBtn.textContent = '✕';
+        closeBtn.addEventListener('click', () => {
+            toast.remove();
+        });
+        toast.appendChild(closeBtn);
+        container.appendChild(toast);
+        return;
+    }
+
+    if (type === 'success') {
+        // remove any loading toasts before showing success
+        const loadingToasts = Array.from(container.querySelectorAll('.status-toast.status-loading')) as HTMLElement[];
+        loadingToasts.forEach(t => t.remove());
+
+        // Add a progress bar that shrinks over the timeout duration
+        const progressWrapper = document.createElement('div');
+        progressWrapper.className = 'status-toast-progress';
+        const progressBar = document.createElement('div');
+        progressBar.className = 'bar';
+        // match the auto-dismiss timeout (5000ms)
+        progressBar.style.animationDuration = '5000ms';
+        progressWrapper.appendChild(progressBar);
+        toast.appendChild(progressWrapper);
+
+        container.appendChild(toast);
+        // auto-dismiss success after 5s
+        const removeTimeout = setTimeout(() => {
+            toast.remove();
+        }, 5000);
+        // If the toast is removed via other means, clear timeout
+        toast.addEventListener('remove', () => clearTimeout(removeTimeout));
+        return;
+    }
 }
 
 // Hide status message
 export function hideStatus() {
-    elements.statusMessage.style.display = 'none';
+    // Remove any loading toasts and clear the inline status element
+    const container = document.querySelector('.status-toast-container') as HTMLDivElement | null;
+    if (container) {
+        const loadingToasts = Array.from(container.querySelectorAll('.status-toast.status-loading')) as HTMLElement[];
+        loadingToasts.forEach(t => t.remove());
+    }
+    try {
+        elements.statusMessage.style.display = 'none';
+    } catch (e) {
+        // ignore
+    }
 }
 
 function filterGroups(filterText: string, excludeGroupId?: string) {
